@@ -119,6 +119,8 @@ public class MenuService(ILogger<MenuService> logger) : IEventListener
       if (playerMenu is null)
         return;
 
+      @event.Cancel();
+
       MenuItem? item = null;
 
       if (containerServerboundPacket.Slot > playerMenu.Size)
