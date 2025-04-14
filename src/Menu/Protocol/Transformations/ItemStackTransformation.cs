@@ -162,7 +162,7 @@ public class ItemStackTransformation(ILogger logger)
         var name = display["Name"] as NbtString;
         if (name != null)
         {
-          var component = ComponentJsonSerializer.Deserialize(name.Value, fromProtocolVersion);
+          var component = ComponentJsonSerializer.Deserialize(name.Value);
           display["Name"] = new NbtString(ComponentLegacySerializer.Serialize(component, '§'));
         }
       }
@@ -242,7 +242,7 @@ public class ItemStackTransformation(ILogger logger)
             if (loreEntry == null)
               continue;
 
-            var component = ComponentJsonSerializer.Deserialize(loreEntry.Value, fromProtocolVersion);
+            var component = ComponentJsonSerializer.Deserialize(loreEntry.Value);
             loreList.Add(new NbtString(ComponentLegacySerializer.Serialize(component, '§')));
 
             display["Lore"] = new NbtList(loreList, NbtTagType.String);
@@ -371,14 +371,14 @@ public class ItemStackTransformation(ILogger logger)
 
         case CustomNameItemComponent customNameItemComponent:
           displayTag["Name"] = new NbtString(customNameItemComponent.Value
-            .SerializeJson(toProtocolVersion).ToJsonString());
+            .SerializeJson().ToJsonString());
           break;
 
         case LoreItemComponent loreItemComponent:
           displayTag["Lore"] =
             new NbtList(
               loreItemComponent.Value.Select(v =>
-                new NbtString(v.SerializeJson(toProtocolVersion).ToJsonString())), NbtTagType.String);
+                new NbtString(v.SerializeJson().ToJsonString())), NbtTagType.String);
           break;
 
         case DamageItemComponent damageItemComponent:

@@ -46,7 +46,7 @@ public class OpenContainerTransformation(ILogger logger)
     var updatedSlotCount = MinecraftMenuRegistry.GetSlotCount(toProtocolVersion, typeIdentifier);
     wrapper.Write(ByteProperty.FromPrimitive((byte) updatedTypeId));
 
-    var component = ComponentJsonSerializer.Deserialize(title.AsPrimitive, fromProtocolVersion);
+    var component = ComponentJsonSerializer.Deserialize(title.AsPrimitive);
     wrapper.Write(StringProperty.FromPrimitive(component.AsText));
 
     wrapper.Write(ByteProperty.FromPrimitive((byte) updatedSlotCount));
@@ -119,8 +119,8 @@ public class OpenContainerTransformation(ILogger logger)
     wrapper.Write(VarIntProperty.FromPrimitive(updatedTypeId));
 
     var title = wrapper.Read<NbtProperty>();
-    var component = ComponentNbtSerializer.Deserialize(title.AsNbtTag, fromProtocolVersion);
-    var updatedTitle = ComponentJsonSerializer.Serialize(component, toProtocolVersion);
+    var component = ComponentNbtSerializer.Deserialize(title.AsNbtTag);
+    var updatedTitle = ComponentJsonSerializer.Serialize(component);
     wrapper.Write(StringProperty.FromPrimitive(updatedTitle.ToJsonString()));
   }
 
