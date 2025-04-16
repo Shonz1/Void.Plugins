@@ -14,8 +14,8 @@ namespace Menus.Services;
 
 internal delegate void Transformer(IMinecraftBinaryPacketWrapper wrapper, ProtocolVersion fromProtocolVersion, ProtocolVersion toProtocolVersion);
 
-internal class TansformationService(
-  ILogger<TansformationService> logger,
+internal class TransformationService(
+  ILogger<TransformationService> logger,
   SetContainerSlotTransformation setContainerSlotTransformation,
   OpenContainerTransformation openContainerTransformation,
   CloseContainerTransformation closeContainerTransformation,
