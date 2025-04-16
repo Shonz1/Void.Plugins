@@ -7,7 +7,7 @@ using Void.Minecraft.Network.Registries.Transformations.Properties;
 
 namespace Menus.Protocol.Transformations;
 
-public class OpenContainerTransformation(ILogger logger)
+public class OpenContainerTransformation(ILogger<OpenContainerTransformation> logger)
 {
   public void Passthrough_1_7_2_plus(IMinecraftBinaryPacketWrapper wrapper,
     ProtocolVersion fromProtocolVersion, ProtocolVersion toProtocolVersion)

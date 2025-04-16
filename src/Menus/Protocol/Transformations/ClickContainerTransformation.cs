@@ -5,7 +5,7 @@ using Void.Minecraft.Network.Registries.Transformations.Properties;
 
 namespace Menus.Protocol.Transformations;
 
-public class ClickContainerTransformation(ILogger logger)
+public class ClickContainerTransformation(ILogger<ClickContainerTransformation> logger)
 {
   public void UpgradeTo_1_9(IMinecraftBinaryPacketWrapper wrapper,
     ProtocolVersion fromProtocolVersion, ProtocolVersion toProtocolVersion)

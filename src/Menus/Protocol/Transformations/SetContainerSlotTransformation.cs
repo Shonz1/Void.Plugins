@@ -6,7 +6,7 @@ using Void.Minecraft.Network.Registries.Transformations.Properties;
 
 namespace Menus.Protocol.Transformations;
 
-public class SetContainerSlotTransformation(ILogger logger, ItemStackTransformation itemStackTransformation)
+public class SetContainerSlotTransformation(ILogger<SetContainerSlotTransformation> logger, ItemStackTransformation itemStackTransformation)
 {
   public void Passthrough_1_7_2_plus(IMinecraftBinaryPacketWrapper wrapper,
     ProtocolVersion fromProtocolVersion, ProtocolVersion toProtocolVersion)

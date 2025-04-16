@@ -5,7 +5,7 @@ using Void.Minecraft.Network.Registries.Transformations.Properties;
 
 namespace Menus.Protocol.Transformations;
 
-public class CloseContainerTransformation(ILogger logger)
+public class CloseContainerTransformation(ILogger<CloseContainerTransformation> logger)
 {
   public void DowngradeTo_1_21(IMinecraftBinaryPacketWrapper wrapper,
     ProtocolVersion fromProtocolVersion, ProtocolVersion toProtocolVersion)

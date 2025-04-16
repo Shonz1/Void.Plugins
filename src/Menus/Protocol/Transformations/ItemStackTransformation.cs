@@ -12,7 +12,7 @@ using Void.Minecraft.Network.Registries.Transformations.Properties;
 
 namespace Menus.Protocol.Transformations;
 
-public class ItemStackTransformation(ILogger logger)
+public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
 {
   public void Downgrade(IMinecraftBinaryPacketWrapper wrapper, ProtocolVersion fromProtocolVersion,
     ProtocolVersion toProtocolVersion)
