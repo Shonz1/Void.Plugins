@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Menus", "src\Menus\Menus.csproj", "{3C186B3D-CB6D-4B59-8250-1D223884075C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerPositions", "src\PlayerPositions\PlayerPositions.csproj", "{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{3C186B3D-CB6D-4B59-8250-1D223884075C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C186B3D-CB6D-4B59-8250-1D223884075C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C186B3D-CB6D-4B59-8250-1D223884075C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
