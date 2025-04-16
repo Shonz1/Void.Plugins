@@ -10,6 +10,7 @@ using Void.Minecraft.Network;
 using Void.Minecraft.Players;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Events;
+using Void.Proxy.Api.Events.Links;
 using Void.Proxy.Api.Events.Network;
 
 namespace Menus.Services;
@@ -100,7 +101,16 @@ public class MenuService(ILogger<MenuService> logger) : IEventListener
   }
 
   [Subscribe]
-  public async ValueTask OnMessageReceived(MessageReceivedEvent @event, CancellationToken cancellationToken)
+  private void OnLinkStopped(LinkStoppedEvent @event)
+  {
+    if (!@event.Link.Player.TryGetMinecraftPlayer(out var player))
+      return;
+
+    menuHolders.Remove(player);
+  }
+
+  [Subscribe]
+  private async ValueTask OnMessageReceived(MessageReceivedEvent @event, CancellationToken cancellationToken)
   {
     if (!@event.Link.Player.TryGetMinecraftPlayer(out var player))
       return;
