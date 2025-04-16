@@ -8,12 +8,12 @@ using Void.Proxy.Api.Events.Services;
 
 namespace Menus;
 
-public class MenuPlugin(ILogger<MenuPlugin> logger, IEventService eventService) : IPlugin
+public class MenusPlugin(ILogger<MenusPlugin> logger, IEventService eventService) : IPlugin
 {
-  public string Name => nameof(MenuPlugin);
+  public string Name => nameof(MenusPlugin);
 
   [Subscribe]
-  public void OnProxyStarting(ProxyStartingEvent @event)
+  private void OnProxyStarting(ProxyStartingEvent @event)
   {
     var itemStackTransformation = new ItemStackTransformation(logger);
     var setContainerSlotTransformation = new SetContainerSlotTransformation(logger, itemStackTransformation);

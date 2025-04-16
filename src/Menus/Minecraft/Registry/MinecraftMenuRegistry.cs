@@ -23,7 +23,7 @@ public class MinecraftMenuRegistry
 
   public static int GetId(ProtocolVersion protocolVersion, Identifier identifier)
   {
-    var assembly = typeof(MenuPlugin).Assembly;
+    var assembly = typeof(MenusPlugin).Assembly;
     var versionName = protocolVersion.GetVersionIntroducedIn();
 
     using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources._{versionName.Replace(".", "._")}.registries.json");
@@ -44,7 +44,7 @@ public class MinecraftMenuRegistry
 
   public static string GetLegacyId(ProtocolVersion protocolVersion, Identifier identifier)
   {
-    var assembly = typeof(MenuPlugin).Assembly;
+    var assembly = typeof(MenusPlugin).Assembly;
     var versionName = protocolVersion.GetVersionIntroducedIn();
 
     using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources._{versionName.Replace(".", "._")}.registries.json");
@@ -65,7 +65,7 @@ public class MinecraftMenuRegistry
 
   public static int GetSlotCount(ProtocolVersion protocolVersion, Identifier identifier)
   {
-    var assembly = typeof(MenuPlugin).Assembly;
+    var assembly = typeof(MenusPlugin).Assembly;
     var versionName = protocolVersion.GetVersionIntroducedIn();
 
     using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources._{versionName.Replace(".", "._")}.registries.json");
@@ -86,7 +86,7 @@ public class MinecraftMenuRegistry
 
   public static Identifier GetIdentifier(ProtocolVersion protocolVersion, int id, int slotCount = 0)
   {
-    var assembly = typeof(MenuPlugin).Assembly;
+    var assembly = typeof(MenusPlugin).Assembly;
     var versionName = protocolVersion.GetVersionIntroducedIn();
 
     using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources._{versionName.Replace(".", "._")}.registries.json");
@@ -108,7 +108,7 @@ public class MinecraftMenuRegistry
 
   public static Identifier GetIdentifier(ProtocolVersion protocolVersion, string id, int slotCount)
   {
-    var assembly = typeof(MenuPlugin).Assembly;
+    var assembly = typeof(MenusPlugin).Assembly;
     var versionName = protocolVersion.GetVersionIntroducedIn();
 
     using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources._{versionName.Replace(".", "._")}.registries.json");
