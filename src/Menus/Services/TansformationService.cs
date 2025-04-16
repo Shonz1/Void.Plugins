@@ -12,9 +12,9 @@ using Void.Proxy.Api.Events;
 
 namespace Menus.Services;
 
-public delegate void Transformer(IMinecraftBinaryPacketWrapper wrapper, ProtocolVersion fromProtocolVersion, ProtocolVersion toProtocolVersion);
+internal delegate void Transformer(IMinecraftBinaryPacketWrapper wrapper, ProtocolVersion fromProtocolVersion, ProtocolVersion toProtocolVersion);
 
-public class TansformationService(
+internal class TansformationService(
   ILogger<TansformationService> logger,
   SetContainerSlotTransformation setContainerSlotTransformation,
   OpenContainerTransformation openContainerTransformation,
@@ -42,20 +42,20 @@ public class TansformationService(
   }
 
   [Subscribe]
-  public void OnPhaseChanged(PhaseChangedEvent @event)
+  private void OnPhaseChanged(PhaseChangedEvent @event)
   {
     var player = @event.Player;
 
     var handler = @event.Phase switch
     {
-      Phase.Play => RegisterPlayTransormations,
+      Phase.Play => RegisterPlayTransformations,
       _ => null as Action<IMinecraftPlayer>
     };
 
     handler?.Invoke(player);
   }
 
-  private void RegisterPlayTransormations(IMinecraftPlayer player)
+  private void RegisterPlayTransformations(IMinecraftPlayer player)
   {
     player.RegisterTransformations<SetContainerSlotClientboundPacket>([
       ..RepeatForRange(ProtocolVersion.MINECRAFT_1_17, ProtocolVersion.MINECRAFT_1_7_2, setContainerSlotTransformation.Passthrough_1_7_2_plus),
@@ -88,6 +88,6 @@ public class TansformationService(
       ..RepeatForRange(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.MINECRAFT_1_21_2, clickContainerTransformation.UpgradeTo_1_21_2)
     ]);
 
-    logger.LogInformation($"Registered play transormations for {player.Profile?.Username ?? "unknown"}");
+    logger.LogInformation($"Registered play transformations for {player.Profile?.Username ?? "unknown"}");
   }
 }

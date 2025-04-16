@@ -10,10 +10,10 @@ using Void.Proxy.Api.Events;
 
 namespace Menus.Services;
 
-public class PacketService(ILogger<PacketService> logger) : IEventListener
+internal class PacketService(ILogger<PacketService> logger) : IEventListener
 {
   [Subscribe]
-  public void OnPhaseChanged(PhaseChangedEvent @event)
+  private void OnPhaseChanged(PhaseChangedEvent @event)
   {
     var player = @event.Player;
 
