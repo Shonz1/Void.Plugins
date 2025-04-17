@@ -28,7 +28,6 @@ internal class PacketService(ILogger<PacketService> logger) : IEventListener
 
   private void RegisterPlayPackets(IMinecraftPlayer player)
   {
-    player.RegisterPacket<SetHeldItemServerboundPacket>(SetHeldItemServerboundPacket.Mappings);
     player.RegisterPacket<SetContainerSlotClientboundPacket>(SetContainerSlotClientboundPacket.Mappings);
 
     player.RegisterPacket<OpenContainerClientboundPacket>(OpenContainerClientboundPacket.Mappings);
