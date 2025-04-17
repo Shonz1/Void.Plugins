@@ -3,4 +3,4 @@ using Void.Common.Events;
 
 namespace PlayerPositions.Events;
 
-public record FirstPositionEvent(PlayerPosition playerPosition) : IEvent;
+public record FirstPositionEvent(PlayerPosition PlayerPosition) : IEvent;
