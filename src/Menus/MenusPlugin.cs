@@ -8,7 +8,7 @@ using Void.Proxy.Api.Plugins;
 
 namespace Menus;
 
-public class MenusPlugin(IDependencyService dependencyService) : IPlugin
+public class MenusPlugin(IDependencyService dependencyService) : IApiPlugin
 {
   public string Name => nameof(MenusPlugin);
 

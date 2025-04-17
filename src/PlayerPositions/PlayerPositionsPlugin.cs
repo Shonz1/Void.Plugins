@@ -7,7 +7,7 @@ using Void.Proxy.Api.Plugins;
 
 namespace PlayerPositions;
 
-public class PlayerPositionsPlugin(IDependencyService dependencyService) : IPlugin
+public class PlayerPositionsPlugin(IDependencyService dependencyService) : IApiPlugin
 {
   public string Name => nameof(PlayerPositionsPlugin);
 
