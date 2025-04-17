@@ -1,10 +1,7 @@
-using Void.Minecraft.Players;
-
 namespace PlayerPositions.Api;
 
-public class PlayerPosition
+public class Position
 {
-  public required IMinecraftPlayer Player { get; init; }
   public double X { get; internal set; }
   public double Y { get; internal set; }
   public double Z { get; internal set; }

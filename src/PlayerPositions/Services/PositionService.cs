@@ -14,14 +14,14 @@ namespace PlayerPositions.Services;
 
 public class PositionService(IEventService eventService) : IEventListener
 {
-  private readonly Dictionary<IMinecraftPlayer, PlayerPosition> positionHolders = new();
+  private readonly Dictionary<IMinecraftPlayer, Position> positionHolders = new();
 
   public bool HasPosition(IMinecraftPlayer player)
   {
     return positionHolders.ContainsKey(player);
   }
 
-  public bool TryGetPosition(IMinecraftPlayer player, [MaybeNullWhen(false)] out PlayerPosition position)
+  public bool TryGetPosition(IMinecraftPlayer player, [MaybeNullWhen(false)] out Position position)
   {
     return positionHolders.TryGetValue(player, out position);
   }
@@ -47,10 +47,20 @@ public class PositionService(IEventService eventService) : IEventListener
       var isFirstPosition = !HasPosition(player);
 
       if (isFirstPosition)
-        positionHolders.Add(player, new PlayerPosition { Player = player });
+        positionHolders.Add(player, new Position());
 
       if (!TryGetPosition(player, out var position))
         return;
+
+      var prevPosition = new Position
+      {
+        X = position.X,
+        Y = position.Y,
+        Z = position.Z,
+        Yaw = position.Yaw,
+        Pitch = position.Pitch,
+        Flags = position.Flags
+      };
 
       switch (@event.Message)
       {
@@ -77,7 +87,9 @@ public class PositionService(IEventService eventService) : IEventListener
       }
 
       if (isFirstPosition)
-        await eventService.ThrowAsync(new FirstPositionEvent(position), cancellationToken);
+        await eventService.ThrowAsync(new PlayerFirstPositionEvent(player, position, prevPosition), cancellationToken);
+
+      await eventService.ThrowAsync(new PlayerPositionUpdateEvent(player, position, prevPosition), cancellationToken);
     }
   }
 }
