@@ -100,6 +100,30 @@ public class MenuService(ILogger<MenuService> logger) : IEventListener
       await OpenMenuAsync(player, inventoryMenu, cancellationToken);
   }
 
+  public async ValueTask ClickSlotAsync(IMinecraftPlayer player, Menu menu, int slot,
+    CancellationToken cancellationToken = default)
+  {
+    MenuItem? item = null;
+
+    if (slot > menu.Size)
+    {
+      var inventoryMenu = FindMenu("Inventory");
+      if (inventoryMenu is not null)
+      {
+        var inventorySlot = slot - menu.Size + inventoryMenu.Size;
+        item = inventoryMenu.ItemsMap.GetValueOrDefault(inventorySlot);
+      }
+    }
+    else
+      item = menu.ItemsMap.GetValueOrDefault(slot);
+
+    if (item is null)
+      return;
+
+    await player.SendChatMessageAsync(item.Command, cancellationToken);
+    await CloseMenuAsync(player, cancellationToken);
+  }
+
   [Subscribe]
   private void OnLinkStopped(LinkStoppedEvent @event)
   {
@@ -129,25 +153,7 @@ public class MenuService(ILogger<MenuService> logger) : IEventListener
 
       @event.Cancel();
 
-      MenuItem? item = null;
-
-      if (containerServerboundPacket.Slot > playerMenu.Size)
-      {
-        var inventoryMenu = FindMenu("Inventory");
-        if (inventoryMenu is not null)
-        {
-          var inventorySlot = containerServerboundPacket.Slot - playerMenu.Size + inventoryMenu.Size;
-          item = inventoryMenu.ItemsMap.GetValueOrDefault(inventorySlot);
-        }
-      }
-      else
-        item = playerMenu.ItemsMap.GetValueOrDefault(containerServerboundPacket.Slot);
-
-      if (item is null)
-        return;
-
-      await player.SendChatMessageAsync(item.Command, cancellationToken);
-      await CloseMenuAsync(player, cancellationToken);
+      await ClickSlotAsync(player, playerMenu, containerServerboundPacket.Slot, cancellationToken);
     }
   }
 
