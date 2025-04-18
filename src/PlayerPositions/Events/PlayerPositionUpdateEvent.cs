@@ -1,6 +1,6 @@
 using PlayerPositions.Api;
-using Void.Common.Events;
 using Void.Minecraft.Players;
+using Void.Proxy.Api.Events;
 
 namespace PlayerPositions.Events;
 

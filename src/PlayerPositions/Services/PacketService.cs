@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using PlayerPositions.Protocol.Packets.Serverbound;
-using Void.Common.Events;
 using Void.Minecraft.Events;
 using Void.Minecraft.Network;
 using Void.Minecraft.Players;

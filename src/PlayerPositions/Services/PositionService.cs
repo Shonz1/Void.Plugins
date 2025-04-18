@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using PlayerPositions.Api;
 using PlayerPositions.Events;
 using PlayerPositions.Protocol.Packets.Serverbound;
-using Void.Common.Events;
 using Void.Minecraft.Players;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Events;

@@ -8,9 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="Void.Common">
-        <HintPath>..\..\..\Void\src\Common\bin\Debug\net9.0\Void.Common.dll</HintPath>
-      </Reference>
       <Reference Include="Void.Minecraft">
         <HintPath>..\..\..\Void\src\Minecraft\bin\Debug\net9.0\Void.Minecraft.dll</HintPath>
       </Reference>

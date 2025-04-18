@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
-using Void.Common.Network;
 using Void.Minecraft.Network;
 using Void.Minecraft.Network.Registries.Transformations.Mappings;
 using Void.Minecraft.Network.Registries.Transformations.Properties;
+using Void.Proxy.Api.Network;
 
 namespace Menus.Protocol.Transformations;
 

@@ -1,7 +1,6 @@
 using Menus.Protocol.Packets.Clientbound;
 using Menus.Protocol.Packets.Serverbound;
 using Microsoft.Extensions.Logging;
-using Void.Common.Events;
 using Void.Minecraft.Events;
 using Void.Minecraft.Network;
 using Void.Minecraft.Players;
