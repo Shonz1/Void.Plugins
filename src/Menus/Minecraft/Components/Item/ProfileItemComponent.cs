@@ -25,7 +25,7 @@ public class ProfileItemComponent : IItemComponent<ProfileItemComponent>
     if (buffer.ReadBoolean())
       name = buffer.ReadString();
 
-    var uuid = Uuid.Empty;
+    var uuid = default(Uuid);
     if (buffer.ReadBoolean())
       uuid = buffer.ReadUuid();
 
@@ -33,7 +33,7 @@ public class ProfileItemComponent : IItemComponent<ProfileItemComponent>
 
     return new ProfileItemComponent
     {
-      Value = new GameProfile(uuid, name, properties)
+      Value = new GameProfile(name, uuid, properties)
     };
   }
 
@@ -44,7 +44,7 @@ public class ProfileItemComponent : IItemComponent<ProfileItemComponent>
     if (hasName)
       buffer.WriteString(Value.Username);
 
-    var hasUuid = Value.Id.AsGuid != Uuid.Empty.AsGuid;
+    var hasUuid = Value.Id != default;
     buffer.WriteBoolean(hasUuid);
     if (hasUuid)
       buffer.WriteUuid(Value.Id);

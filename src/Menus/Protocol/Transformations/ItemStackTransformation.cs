@@ -391,10 +391,11 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
           profileTag["Id"] = new NbtString(gameProfile.Id.ToString());
           profileTag["Name"] = new NbtString(gameProfile.Username);
 
-          var propertyTags = new NbtCompound[gameProfile.Properties.Length];
-          for (var i = 0; i < gameProfile.Properties.Length; i++)
+          var profileProperties = gameProfile.Properties ?? [];
+          var propertyTags = new NbtCompound[profileProperties.Length];
+          for (var i = 0; i < profileProperties.Length; i++)
           {
-            var property = gameProfile.Properties[i];
+            var property = profileProperties[i];
             var propertyTag = new NbtCompound();
             propertyTag["Value"] = new NbtString(property.Value);
             propertyTags[i] = propertyTag;
