@@ -70,17 +70,21 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
   public async ValueTask UpdateSlotsAsync(IMinecraftPlayer player, Menu menu,
     CancellationToken cancellationToken = default)
   {
-    for (var i = 0; i < menu.Size + 36; i++)
+    var isInventory = menu.Type == "minecraft:inventory";
+
+    if (!isInventory)
     {
-      if (!menu.ItemsMap.TryGetValue(i, out var item))
-        await UpdateSlotAsync(player, menu, i, cancellationToken);
-      else
+      for (var i = 0; i < menu.Size; i++)
         await UpdateSlotAsync(player, menu, i, cancellationToken);
     }
 
+    var inventoryMenu = isInventory ? menu : menus.Values.FirstOrDefault(m => m.Type == "minecraft:inventory");
+    if (inventoryMenu is null)
+      return;
 
-    foreach (var slot in menu.ItemsMap.Keys)
-      await UpdateSlotAsync(player, menu, slot, cancellationToken);
+    for (var i = 0; i < inventoryMenu.Size + 36; i++)
+      await UpdateSlotAsync(player, inventoryMenu, i, cancellationToken);
+
   }
 
   public async ValueTask UpdateSlotAsync(IMinecraftPlayer player, Menu menu, int slot,
@@ -143,18 +147,16 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
     if (item is null)
       return;
 
-    await CloseMenuAsync(player, cancellationToken);
+    // await CloseMenuAsync(player, cancellationToken);
 
     switch (clickType)
     {
       case ClickType.RightMouseButton when item.RightClickCommand is not null:
         await commandService.ExecuteAsync(player, item.RightClickCommand, cancellationToken);
         break;
-      case ClickType.LeftMouseButton:
+      case ClickType.LeftMouseButton when item.LeftClickCommand is not null:
         await commandService.ExecuteAsync(player, item.LeftClickCommand, cancellationToken);
         break;
-      default:
-        throw new ArgumentOutOfRangeException(nameof(clickType), clickType, null);
     }
   }
 
