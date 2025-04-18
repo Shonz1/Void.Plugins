@@ -4,4 +4,4 @@ using Void.Minecraft.Profiles;
 
 namespace Menus.Api;
 
-public record MenuItem(Identifier Identifier, string LeftClickCommand, string? RightClickCommand = null, int Count = 1, Component? Title = null, List<Component>? Lore = null, GameProfile? Profile = null);
+public record MenuItem(Identifier Identifier, string? LeftClickCommand = null, string? RightClickCommand = null, int Count = 1, Component? Title = null, List<Component>? Lore = null, GameProfile? Profile = null);
