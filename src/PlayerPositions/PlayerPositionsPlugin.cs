@@ -19,8 +19,5 @@ public class PlayerPositionsPlugin(IDependencyService dependencyService) : IApiP
       services.AddSingleton<PacketService>();
       services.AddSingleton<PositionService>();
     });
-
-    dependencyService.CreateInstance<PacketService>();
-    dependencyService.CreateInstance<PositionService>();
   }
 }

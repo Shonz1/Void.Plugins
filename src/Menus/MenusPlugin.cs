@@ -27,9 +27,5 @@ public class MenusPlugin(IDependencyService dependencyService) : IApiPlugin
       services.AddSingleton<TransformationService>();
       services.AddSingleton<MenuService>();
     });
-
-    dependencyService.CreateInstance<PacketService>();
-    dependencyService.CreateInstance<TransformationService>();
-    dependencyService.CreateInstance<MenuService>();
   }
 }
