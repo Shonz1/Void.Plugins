@@ -8,6 +8,7 @@ namespace PlayerPositions.Protocol.Packets.Serverbound;
 public class SetPlayerPositionServerboundPacket : IMinecraftServerboundPacket<SetPlayerPositionServerboundPacket>
 {
   public static readonly MinecraftPacketIdMapping[] Mappings = [
+    new(0x04, ProtocolVersion.MINECRAFT_1_7_2),
     new(0x1C, ProtocolVersion.MINECRAFT_1_21_5)
   ];
 

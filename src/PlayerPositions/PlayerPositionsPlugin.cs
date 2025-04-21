@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using PlayerPositions.Protocol.Transformations;
 using PlayerPositions.Services;
 using Void.Proxy.Api.Events;
 using Void.Proxy.Api.Events.Proxy;
@@ -16,7 +17,12 @@ public class PlayerPositionsPlugin(IDependencyService dependencyService) : IApiP
   {
     dependencyService.Register(services =>
     {
+      services.AddSingleton<SetPlayerPositionTransformation>();
+      services.AddSingleton<SetPlayerRotationTransformation>();
+      services.AddSingleton<SetPlayerPositionAndRotationTransformation>();
+
       services.AddSingleton<PacketService>();
+      services.AddSingleton<TransformationService>();
       services.AddSingleton<PositionService>();
     });
   }
