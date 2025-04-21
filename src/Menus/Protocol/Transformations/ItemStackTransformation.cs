@@ -63,7 +63,10 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
 
     var itemId = wrapper.Read<ShortProperty>();
     if (itemId.AsPrimitive == -1)
+    {
+      wrapper.Write(itemId);
       return;
+    }
 
     var count = wrapper.Read<ByteProperty>();
     var itemMeta = wrapper.Read<ShortProperty>();
@@ -87,7 +90,10 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
 
     var itemId = wrapper.Read<ShortProperty>();
     if (itemId.AsPrimitive == -1)
+    {
+      wrapper.Write(itemId);
       return;
+    }
 
     var count = wrapper.Read<ByteProperty>();
     var itemMeta = wrapper.Read<ShortProperty>();
@@ -120,7 +126,10 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
 
     var itemId = wrapper.Read<ShortProperty>();
     if (itemId.AsPrimitive == -1)
+    {
+      wrapper.Write(itemId);
       return;
+    }
 
     var count = wrapper.Read<ByteProperty>();
     var itemMeta = wrapper.Read<ShortProperty>();
@@ -143,7 +152,10 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
 
     var itemId = wrapper.Read<ShortProperty>();
     if (itemId.AsPrimitive == -1)
+    {
+      wrapper.Write(itemId);
       return;
+    }
 
     var itemIdentifier = MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive);
     var updatedItemId = MinecraftItemRegistry.GetId(toProtocolVersion, itemIdentifier);
@@ -178,7 +190,10 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
 
     var itemId = wrapper.Read<ShortProperty>();
     if (itemId.AsPrimitive == -1)
+    {
+      wrapper.Write(itemId);
       return;
+    }
 
     var itemIdentifier = MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive);
     var updatedItemId = MinecraftItemRegistry.GetId(toProtocolVersion, itemIdentifier);
