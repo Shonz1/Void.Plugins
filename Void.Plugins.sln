@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Menus", "src\Menus\Menus.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerPositions", "src\PlayerPositions\PlayerPositions.csproj", "{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BossBars", "src\BossBars\BossBars.csproj", "{42B76459-DC66-49D5-A921-D0C320F1B408}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A2F3FBD-9879-48FE-86CA-729563BC4FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B76459-DC66-49D5-A921-D0C320F1B408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B76459-DC66-49D5-A921-D0C320F1B408}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B76459-DC66-49D5-A921-D0C320F1B408}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B76459-DC66-49D5-A921-D0C320F1B408}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
