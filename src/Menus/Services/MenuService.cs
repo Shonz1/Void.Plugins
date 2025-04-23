@@ -67,6 +67,22 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
     await player.SendPacketAsync(closeContainerPacket, cancellationToken);
   }
 
+  public async ValueTask SetMenuProperty(IMinecraftPlayer player, int property, int value, CancellationToken cancellationToken = default)
+  {
+    var playerMenu = FindPlayerMenu(player);
+    if (playerMenu is null)
+      return;
+
+    var setContainerPropertyPacket = new SetContainerPropertyClientboundPacket
+    {
+      ContainerId = 1,
+      Property = property,
+      Value = value
+    };
+
+    await player.SendPacketAsync(setContainerPropertyPacket, cancellationToken);
+  }
+
   public async ValueTask UpdateSlotsAsync(IMinecraftPlayer player, Menu menu,
     CancellationToken cancellationToken = default)
   {

@@ -16,6 +16,7 @@ internal delegate void Transformer(IMinecraftBinaryPacketWrapper wrapper, Protoc
 internal class TransformationService(
   ILogger<TransformationService> logger,
   SetContainerSlotTransformation setContainerSlotTransformation,
+  SetContainerPropertyTransformation setContainerPropertyTransformation,
   OpenContainerTransformation openContainerTransformation,
   CloseContainerTransformation closeContainerTransformation,
   ClickContainerTransformation clickContainerTransformation
@@ -64,6 +65,10 @@ internal class TransformationService(
       ..RepeatForRange(ProtocolVersion.MINECRAFT_1_21_2, ProtocolVersion.MINECRAFT_1_20_5, setContainerSlotTransformation.Passthrough_1_20_5_plus),
       ..RepeatForRange(ProtocolVersion.MINECRAFT_1_21_4, ProtocolVersion.MINECRAFT_1_21_2, setContainerSlotTransformation.DowngradeTo_1_21_2),
       ..RepeatForRange(ProtocolVersion.Latest, ProtocolVersion.MINECRAFT_1_21_4, setContainerSlotTransformation.Passthrough_1_21_4_plus),
+    ]);
+
+    player.RegisterTransformations<SetContainerPropertyClientboundPacket>([
+      ..RepeatForRange(ProtocolVersion.MINECRAFT_1_21_2, ProtocolVersion.MINECRAFT_1_21, setContainerPropertyTransformation.DowngradeTo_1_21)
     ]);
 
     player.RegisterTransformations<OpenContainerClientboundPacket>([
