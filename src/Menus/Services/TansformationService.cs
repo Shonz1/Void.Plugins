@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using Void.Minecraft.Events;
 using Void.Minecraft.Network;
 using Void.Minecraft.Network.Registries.Transformations.Mappings;
-using Void.Minecraft.Players;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Events;
+using Void.Proxy.Api.Players.Contexts;
 
 namespace Menus.Services;
 
@@ -15,6 +15,7 @@ internal delegate void Transformer(IMinecraftBinaryPacketWrapper wrapper, Protoc
 
 internal class TransformationService(
   ILogger<TransformationService> logger,
+  IPlayerContext playerContext,
   SetContainerSlotTransformation setContainerSlotTransformation,
   SetContainerPropertyTransformation setContainerPropertyTransformation,
   OpenContainerTransformation openContainerTransformation,
@@ -44,19 +45,19 @@ internal class TransformationService(
   [Subscribe]
   private void OnPhaseChanged(PhaseChangedEvent @event)
   {
-    var player = @event.Player;
-
     var handler = @event.Phase switch
     {
       Phase.Play => RegisterPlayTransformations,
-      _ => null as Action<IMinecraftPlayer>
+      _ => null as Action
     };
 
-    handler?.Invoke(player);
+    handler?.Invoke();
   }
 
-  private void RegisterPlayTransformations(IMinecraftPlayer player)
+  private void RegisterPlayTransformations()
   {
+    var player = playerContext.Player.AsMinecraftPlayer();
+
     player.RegisterTransformations<SetContainerSlotClientboundPacket>([
       ..RepeatForRange(ProtocolVersion.MINECRAFT_1_17, ProtocolVersion.MINECRAFT_1_7_2, setContainerSlotTransformation.Passthrough_1_7_2_plus),
       ..RepeatForRange(ProtocolVersion.MINECRAFT_1_17_1, ProtocolVersion.MINECRAFT_1_17, setContainerSlotTransformation.DowngradeTo_1_17),

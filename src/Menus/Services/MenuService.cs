@@ -6,37 +6,30 @@ using Menus.Protocol.Packets.Clientbound;
 using Menus.Protocol.Packets.Serverbound;
 using Microsoft.Extensions.Logging;
 using Void.Minecraft.Network;
-using Void.Minecraft.Players;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Commands;
 using Void.Proxy.Api.Events;
-using Void.Proxy.Api.Events.Links;
 using Void.Proxy.Api.Events.Network;
+using Void.Proxy.Api.Players.Contexts;
 
 namespace Menus.Services;
 
-public class MenuService(ILogger<MenuService> logger, ICommandService commandService) : IEventListener
+public class MenuService(ILogger<MenuService> logger, IPlayerContext playerContext, ICommandService commandService) : IEventListener
 {
-  private readonly Dictionary<string, Menu> menus = new();
-  private readonly Dictionary<IMinecraftPlayer, Menu> menuHolders = new();
+  private static Menu? defaultInventoryMenu;
 
-  public Menu? FindMenu(string name)
-  {
-    return menus.GetValueOrDefault(name);
-  }
+  public Menu? InventoryMenu = defaultInventoryMenu;
+  public Menu? CurrentMenu;
 
-  public Menu? FindPlayerMenu(IMinecraftPlayer player)
+  public async ValueTask OpenAsync(Menu menu, CancellationToken cancellationToken)
   {
-    return menuHolders.GetValueOrDefault(player);
-  }
+    var player = playerContext.Player.AsMinecraftPlayer();
 
-  public async ValueTask OpenMenuAsync(IMinecraftPlayer player, Menu menu, CancellationToken cancellationToken = default)
-  {
     var isPlayerInventory = menu.Type == "minecraft:inventory";
 
     if (!isPlayerInventory)
     {
-      menuHolders[player] = menu;
+      CurrentMenu = menu;
 
       logger.LogTrace($"Opening menu {menu.Name} for {player.Profile?.Username ?? "unknown"}");
       var openContainerPacket = new OpenContainerClientboundPacket
@@ -48,16 +41,17 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
       await player.SendPacketAsync(openContainerPacket, cancellationToken);
     }
 
-    await UpdateSlotsAsync(player, menu, cancellationToken);
+    await UpdateSlotsAsync(menu, cancellationToken);
   }
 
-  public async ValueTask CloseMenuAsync(IMinecraftPlayer player, CancellationToken cancellationToken = default)
+  public async ValueTask CloseAsync(CancellationToken cancellationToken)
   {
-    var playerMenu = FindPlayerMenu(player);
-    if (playerMenu is null)
+    var player = playerContext.Player.AsMinecraftPlayer();
+
+    if (CurrentMenu is null)
       return;
 
-    menuHolders.Remove(player);
+    CurrentMenu = null;
 
     var closeContainerPacket = new CloseContainerClientboundPacket
     {
@@ -67,10 +61,9 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
     await player.SendPacketAsync(closeContainerPacket, cancellationToken);
   }
 
-  public async ValueTask SetMenuProperty(IMinecraftPlayer player, int property, int value, CancellationToken cancellationToken = default)
+  public async ValueTask SetProperty(int property, int value, CancellationToken cancellationToken)
   {
-    var playerMenu = FindPlayerMenu(player);
-    if (playerMenu is null)
+    if (CurrentMenu is null)
       return;
 
     var setContainerPropertyPacket = new SetContainerPropertyClientboundPacket
@@ -80,32 +73,31 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
       Value = value
     };
 
-    await player.SendPacketAsync(setContainerPropertyPacket, cancellationToken);
+    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(setContainerPropertyPacket, cancellationToken);
   }
 
-  public async ValueTask UpdateSlotsAsync(IMinecraftPlayer player, Menu menu,
-    CancellationToken cancellationToken = default)
+  public async ValueTask UpdateSlotsAsync(Menu menu, CancellationToken cancellationToken)
   {
     var isInventory = menu.Type == "minecraft:inventory";
 
     if (!isInventory)
     {
       for (var i = 0; i < menu.Size; i++)
-        await UpdateSlotAsync(player, menu, i, cancellationToken);
+        await UpdateSlotAsync(menu, i, cancellationToken);
     }
 
-    var inventoryMenu = isInventory ? menu : menus.Values.FirstOrDefault(m => m.Type == "minecraft:inventory");
-    if (inventoryMenu is null)
+    if (InventoryMenu is null)
       return;
 
-    for (var i = 0; i < inventoryMenu.Size + 36; i++)
-      await UpdateSlotAsync(player, inventoryMenu, i, cancellationToken);
+    for (var i = 0; i < InventoryMenu.Size + 36; i++)
+      await UpdateSlotAsync(InventoryMenu, i, cancellationToken);
 
   }
 
-  public async ValueTask UpdateSlotAsync(IMinecraftPlayer player, Menu menu, int slot,
-    CancellationToken cancellationToken = default)
+  public async ValueTask UpdateSlotAsync(Menu menu, int slot, CancellationToken cancellationToken)
   {
+    var player = playerContext.Player.AsMinecraftPlayer();
+
     var isPlayerInventory = menu.Type == "minecraft:inventory";
 
     ItemStack? itemStack = null;
@@ -143,18 +135,16 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
     await player.SendPacketAsync(setSlotPacket, cancellationToken);
   }
 
-  public async ValueTask ClickSlotAsync(IMinecraftPlayer player, Menu menu, int slot, ClickType clickType,
-    CancellationToken cancellationToken = default)
+  public async ValueTask ClickSlotAsync(Menu menu, int slot, ClickType clickType, CancellationToken cancellationToken)
   {
     MenuItem? item = null;
 
     if (slot > menu.Size)
     {
-      var inventoryMenu = menus.Values.FirstOrDefault(m => m.Type == "minecraft:inventory");
-      if (inventoryMenu is not null)
+      if (InventoryMenu is not null)
       {
-        var inventorySlot = slot - menu.Size + inventoryMenu.Size;
-        item = inventoryMenu.ItemsMap.GetValueOrDefault(inventorySlot);
+        var inventorySlot = slot - menu.Size + InventoryMenu.Size;
+        item = InventoryMenu.ItemsMap.GetValueOrDefault(inventorySlot);
       }
     }
     else
@@ -163,7 +153,7 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
     if (item is null)
       return;
 
-    // await CloseMenuAsync(player, cancellationToken);
+    var player = playerContext.Player.AsMinecraftPlayer();
 
     switch (clickType)
     {
@@ -177,46 +167,33 @@ public class MenuService(ILogger<MenuService> logger, ICommandService commandSer
   }
 
   [Subscribe]
-  private void OnLinkStopped(LinkStoppedEvent @event)
-  {
-    if (!@event.Link.Player.TryGetMinecraftPlayer(out var player))
-      return;
-
-    menuHolders.Remove(player);
-  }
-
-  [Subscribe]
   private async ValueTask OnMessageReceived(MessageReceivedEvent @event, CancellationToken cancellationToken)
   {
-    if (!@event.Link.Player.TryGetMinecraftPlayer(out var player))
-      return;
-
     if (@event.Message is CloseContainerClientboundPacket or CloseContainerServerboundPacket
         or OpenContainerClientboundPacket)
     {
-      menuHolders.Remove(player);
+      CurrentMenu = null;
     }
 
     if (@event.Message is ClickContainerServerboundPacket containerServerboundPacket)
     {
-      var playerMenu = FindPlayerMenu(player);
-      if (playerMenu is null)
+      if (CurrentMenu is null)
         return;
 
       @event.Cancel();
 
       if (containerServerboundPacket.Mode > 0)
       {
-        await UpdateSlotAsync(player, playerMenu, containerServerboundPacket.Slot, cancellationToken);
+        await UpdateSlotAsync(CurrentMenu, containerServerboundPacket.Slot, cancellationToken);
         return;
       }
 
-      await ClickSlotAsync(player, playerMenu, containerServerboundPacket.Slot, (ClickType) containerServerboundPacket.Button, cancellationToken);
+      await ClickSlotAsync(CurrentMenu, containerServerboundPacket.Slot, (ClickType) containerServerboundPacket.Button, cancellationToken);
     }
   }
 
-  public void RegisterMenu(Menu menu)
+  public static void SetDefaultInventoryMenu(Menu menu)
   {
-    menus[menu.Name] = menu;
+    defaultInventoryMenu = menu;
   }
 }
