@@ -7,7 +7,7 @@ using Void.Minecraft.Profiles;
 
 namespace BossBars.Protocol.Packets.Clientbound;
 
-public class BossBarClientboundPacket : IMinecraftClientboundPacket<BossBarClientboundPacket>
+internal class BossBarClientboundPacket : IMinecraftClientboundPacket<BossBarClientboundPacket>
 {
   public static readonly MinecraftPacketIdMapping[] Mappings = [
     new(0x0A, ProtocolVersion.MINECRAFT_1_21),

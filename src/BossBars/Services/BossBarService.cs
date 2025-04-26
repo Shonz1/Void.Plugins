@@ -2,126 +2,107 @@ using BossBars.Api;
 using BossBars.Minecraft.BossBar.Actions;
 using BossBars.Protocol.Packets.Clientbound;
 using Void.Minecraft.Components.Text;
-using Void.Minecraft.Players;
 using Void.Minecraft.Players.Extensions;
 using Void.Minecraft.Profiles;
 using Void.Proxy.Api.Events;
-using Void.Proxy.Api.Events.Links;
+using Void.Proxy.Api.Events.Plugins;
+using Void.Proxy.Api.Players.Contexts;
 
 namespace BossBars.Services;
 
-public class BossBarService : IEventListener
+public class BossBarService(IPlayerContext playerContext, BossBarsPlugin plugin) : IEventListener
 {
-  private readonly Dictionary<IMinecraftPlayer, Dictionary<Uuid, BossBar>> bossBarHolders = new();
+  private readonly Dictionary<Uuid, BossBar> bossBars = new();
 
-  public async ValueTask AddBossBar(IMinecraftPlayer player, BossBar bossBar, CancellationToken cancellationToken)
+  public async ValueTask AddAsync(BossBar bossBar, CancellationToken cancellationToken)
   {
-    EnsurePlayerExistsAsHolder(player);
+    bossBars.Add(bossBar.Id, bossBar);
 
-    bossBarHolders[player].Add(bossBar.Id, bossBar);
-
-    await player.SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new AddBossBarAction(bossBar.Title, bossBar.Health, (int) bossBar.Color, (int) bossBar.Division, (int) bossBar.Flags)
     }, cancellationToken);
   }
 
-  public async ValueTask RemoveBossBar(IMinecraftPlayer player, BossBar bossBar, CancellationToken cancellationToken)
+  public async ValueTask RemoveAsync(BossBar bossBar, CancellationToken cancellationToken)
   {
-    EnsurePlayerExistsAsHolder(player);
+    bossBars.Remove(bossBar.Id);
 
-    bossBarHolders[player].Remove(bossBar.Id);
-
-    await player.SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new RemoveBossBarAction()
     }, cancellationToken);
   }
 
-  public async ValueTask SetBossBarTitle(IMinecraftPlayer player, BossBar bossBar, Component value, CancellationToken cancellationToken)
+  public async ValueTask SetTitleAsync(BossBar bossBar, Component value, CancellationToken cancellationToken)
   {
-    EnsurePlayerExistsAsHolder(player);
-
-    if (!bossBarHolders[player].ContainsKey(bossBar.Id))
+    if (!bossBars.ContainsKey(bossBar.Id))
       return;
 
-    bossBarHolders[player][bossBar.Id] = bossBar with { Title = value };
+    bossBars[bossBar.Id] = bossBar with { Title = value };
 
-    await player.SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new UpdateTitleBossBarAction(value)
     }, cancellationToken);
   }
 
-  public async ValueTask SetBossBarHealth(IMinecraftPlayer player, BossBar bossBar, float value, CancellationToken cancellationToken)
+  public async ValueTask SetHealthAsync(BossBar bossBar, float value, CancellationToken cancellationToken)
   {
-    EnsurePlayerExistsAsHolder(player);
-
-    if (!bossBarHolders[player].ContainsKey(bossBar.Id))
+    if (!bossBars.ContainsKey(bossBar.Id))
       return;
 
-    bossBarHolders[player][bossBar.Id] = bossBar with { Health = value };
+    bossBars[bossBar.Id] = bossBar with { Health = value };
 
-    await player.SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new UpdateHealthBossBarAction(value)
     }, cancellationToken);
   }
 
-  public async ValueTask SetBossBarStyle(IMinecraftPlayer player, BossBar bossBar, BossBarColor colorValue,
+  public async ValueTask SetStyleAsync(BossBar bossBar, BossBarColor colorValue,
     CancellationToken cancellationToken)
   {
-    EnsurePlayerExistsAsHolder(player);
-
-    if (!bossBarHolders[player].ContainsKey(bossBar.Id))
+    if (!bossBars.TryGetValue(bossBar.Id, out var bar))
       return;
 
-    await SetBossBarStyle(player, bossBar, colorValue, bossBarHolders[player][bossBar.Id].Division, cancellationToken);
+    await SetStyleAsync(bossBar, colorValue, bar.Division, cancellationToken);
   }
 
-  public async ValueTask SetBossBarStyle(IMinecraftPlayer player, BossBar bossBar, BossBarDivision divisionValue,
+  public async ValueTask SetStyleAsync(BossBar bossBar, BossBarDivision divisionValue,
     CancellationToken cancellationToken)
   {
-    EnsurePlayerExistsAsHolder(player);
-
-    if (!bossBarHolders[player].ContainsKey(bossBar.Id))
+    if (!bossBars.TryGetValue(bossBar.Id, out var bar))
       return;
 
-    await SetBossBarStyle(player, bossBar, bossBarHolders[player][bossBar.Id].Color, divisionValue, cancellationToken);
+    await SetStyleAsync(bossBar, bar.Color, divisionValue, cancellationToken);
   }
 
-  public async ValueTask SetBossBarStyle(IMinecraftPlayer player, BossBar bossBar, BossBarColor colorValue, BossBarDivision divisionValue, CancellationToken cancellationToken)
+  public async ValueTask SetStyleAsync(BossBar bossBar, BossBarColor colorValue, BossBarDivision divisionValue, CancellationToken cancellationToken)
   {
-    EnsurePlayerExistsAsHolder(player);
-
-    if (!bossBarHolders[player].ContainsKey(bossBar.Id))
+    if (!bossBars.ContainsKey(bossBar.Id))
       return;
 
-    bossBarHolders[player][bossBar.Id] = bossBar with { Color = colorValue, Division = divisionValue};
+    bossBars[bossBar.Id] = bossBar with { Color = colorValue, Division = divisionValue};
 
-    await player.SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new UpdateStyleBossBarAction((int) colorValue, (int) divisionValue)
     }, cancellationToken);
   }
 
-  private void EnsurePlayerExistsAsHolder(IMinecraftPlayer player)
-  {
-    if (!bossBarHolders.ContainsKey(player))
-      bossBarHolders.Add(player, new Dictionary<Uuid, BossBar>());
-  }
-
   [Subscribe]
-  private void OnLinkStopped(LinkStoppedEvent @event)
+  private async ValueTask OnPluginUnloading(PluginUnloadingEvent @event, CancellationToken cancellationToken)
   {
-    if (!@event.Link.Player.TryGetMinecraftPlayer(out var player))
+    if (@event.Plugin != plugin)
       return;
 
-    bossBarHolders.Remove(player);
+    foreach (var bossBar in bossBars.Values)
+      await RemoveAsync(bossBar, cancellationToken);
   }
 }
