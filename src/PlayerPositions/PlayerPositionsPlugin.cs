@@ -21,9 +21,9 @@ public class PlayerPositionsPlugin(IDependencyService dependencyService) : IApiP
       services.AddSingleton<SetPlayerRotationTransformation>();
       services.AddSingleton<SetPlayerPositionAndRotationTransformation>();
 
-      services.AddSingleton<PacketService>();
-      services.AddSingleton<TransformationService>();
-      services.AddSingleton<PositionService>();
+      services.AddScoped<PacketService>();
+      services.AddScoped<TransformationService>();
+      services.AddScoped<PositionService>();
     });
   }
 }

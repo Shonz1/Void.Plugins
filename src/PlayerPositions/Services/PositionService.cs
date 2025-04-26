@@ -2,54 +2,38 @@ using System.Diagnostics.CodeAnalysis;
 using PlayerPositions.Api;
 using PlayerPositions.Events;
 using PlayerPositions.Protocol.Packets.Serverbound;
-using Void.Minecraft.Players;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Events;
-using Void.Proxy.Api.Events.Links;
 using Void.Proxy.Api.Events.Network;
 using Void.Proxy.Api.Events.Services;
+using Void.Proxy.Api.Players.Contexts;
 
 namespace PlayerPositions.Services;
 
-public class PositionService(IEventService eventService) : IEventListener
+public class PositionService(IPlayerContext playerContext, IEventService eventService) : IEventListener
 {
-  private readonly Dictionary<IMinecraftPlayer, Position> positionHolders = new();
+  private Position? position;
 
-  public bool HasPosition(IMinecraftPlayer player)
+  public bool HasPosition()
   {
-    return positionHolders.ContainsKey(player);
+    return position is not null;
   }
 
-  public bool TryGetPosition(IMinecraftPlayer player, [MaybeNullWhen(false)] out Position position)
+  public bool TryGetPosition([MaybeNullWhen(false)] out Position position)
   {
-    return positionHolders.TryGetValue(player, out position);
-  }
-
-  [Subscribe]
-  private void OnLinkStopped(LinkStoppedEvent @event)
-  {
-    if (!@event.Link.Player.TryGetMinecraftPlayer(out var player))
-      return;
-
-    positionHolders.Remove(player);
+    position = this.position;
+    return HasPosition();
   }
 
   [Subscribe]
   private async ValueTask OnMessageReceived(MessageReceivedEvent @event, CancellationToken cancellationToken)
   {
-    if (!@event.Link.Player.TryGetMinecraftPlayer(out var player))
-      return;
-
     if (@event.Message is SetPlayerPositionServerboundPacket or SetPlayerRotationServerboundPacket
         or SetPlayerPositionAndRotationServerboundPacket)
     {
-      var isFirstPosition = !HasPosition(player);
+      var isFirstPosition = !HasPosition();
 
-      if (isFirstPosition)
-        positionHolders.Add(player, new Position());
-
-      if (!TryGetPosition(player, out var position))
-        return;
+      position = new Position();
 
       var prevPosition = new Position
       {
@@ -84,6 +68,8 @@ public class PositionService(IEventService eventService) : IEventListener
           position.Flags = positionAndRotationPacket.Flags;
           break;
       }
+
+      var player = playerContext.Player.AsMinecraftPlayer();
 
       if (isFirstPosition)
         await eventService.ThrowAsync(new PlayerFirstPositionEvent(player, position, prevPosition), cancellationToken);
