@@ -24,10 +24,8 @@ internal class PacketService(ILogger<PacketService> logger, IPlayerContext playe
 
   private void RegisterPlayPackets()
   {
-    var player = playerContext.Player.AsMinecraftPlayer();
+    playerContext.Player.RegisterPacket<BossBarClientboundPacket>(BossBarClientboundPacket.Mappings);
 
-    player.RegisterPacket<BossBarClientboundPacket>(BossBarClientboundPacket.Mappings);
-
-    logger.LogInformation($"Registered play packets for {player.Profile?.Username ?? "unknown"}");
+    logger.LogInformation($"Registered play packets for {PlayerExtensions.get_Profile(playerContext.Player)?.Username ?? "unknown"}");
   }
 }

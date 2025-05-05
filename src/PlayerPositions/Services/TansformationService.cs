@@ -53,20 +53,18 @@ internal class TransformationService(
 
   private void RegisterPlayTransformations()
   {
-    var player = playerContext.Player.AsMinecraftPlayer();
-
-    player.RegisterTransformations<SetPlayerPositionServerboundPacket>([
+    playerContext.Player.RegisterTransformations<SetPlayerPositionServerboundPacket>([
       ..RepeatForRange(ProtocolVersion.Latest, ProtocolVersion.MINECRAFT_1_21_4, setPlayerPositionTransformation.DowngradeTo_1_7_2)
     ]);
 
-    player.RegisterTransformations<SetPlayerRotationServerboundPacket>([
+    playerContext.Player.RegisterTransformations<SetPlayerRotationServerboundPacket>([
       ..RepeatForRange(ProtocolVersion.Latest, ProtocolVersion.MINECRAFT_1_21_4, setPlayerRotationTransformation.DowngradeTo_1_7_2)
     ]);
 
-    player.RegisterTransformations<SetPlayerPositionAndRotationServerboundPacket>([
+    playerContext.Player.RegisterTransformations<SetPlayerPositionAndRotationServerboundPacket>([
       ..RepeatForRange(ProtocolVersion.Latest, ProtocolVersion.MINECRAFT_1_21_4, setPlayerPositionAndRotationTransformation.DowngradeTo_1_7_2)
     ]);
 
-    logger.LogInformation($"Registered play transformations for {player.Profile?.Username ?? "unknown"}");
+    logger.LogInformation($"Registered play transformations for {PlayerExtensions.get_Profile(playerContext.Player)?.Username ?? "unknown"}");
   }
 }

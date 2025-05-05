@@ -24,12 +24,10 @@ internal class PacketService(ILogger<PacketService> logger, IPlayerContext playe
 
   private void RegisterPlayPackets()
   {
-    var player = playerContext.Player.AsMinecraftPlayer();
+    playerContext.Player.RegisterPacket<SetPlayerPositionServerboundPacket>(SetPlayerPositionServerboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<SetPlayerRotationServerboundPacket>(SetPlayerRotationServerboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<SetPlayerPositionAndRotationServerboundPacket>(SetPlayerPositionAndRotationServerboundPacket.Mappings);
 
-    player.RegisterPacket<SetPlayerPositionServerboundPacket>(SetPlayerPositionServerboundPacket.Mappings);
-    player.RegisterPacket<SetPlayerRotationServerboundPacket>(SetPlayerRotationServerboundPacket.Mappings);
-    player.RegisterPacket<SetPlayerPositionAndRotationServerboundPacket>(SetPlayerPositionAndRotationServerboundPacket.Mappings);
-
-    logger.LogInformation($"Registered play packets for {player.Profile?.Username ?? "unknown"}");
+    logger.LogInformation($"Registered play packets for {PlayerExtensions.get_Profile(playerContext.Player)?.Username ?? "unknown"}");
   }
 }

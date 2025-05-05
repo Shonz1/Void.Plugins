@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using PlayerPositions.Api;
 using PlayerPositions.Events;
 using PlayerPositions.Protocol.Packets.Serverbound;
-using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Events;
 using Void.Proxy.Api.Events.Network;
 using Void.Proxy.Api.Events.Services;
@@ -69,12 +68,10 @@ public class PositionService(IPlayerContext playerContext, IEventService eventSe
           break;
       }
 
-      var player = playerContext.Player.AsMinecraftPlayer();
-
       if (isFirstPosition)
-        await eventService.ThrowAsync(new PlayerFirstPositionEvent(player, position, prevPosition), cancellationToken);
+        await eventService.ThrowAsync(new PlayerFirstPositionEvent(playerContext.Player, position, prevPosition), cancellationToken);
 
-      await eventService.ThrowAsync(new PlayerPositionUpdateEvent(player, position, prevPosition), cancellationToken);
+      await eventService.ThrowAsync(new PlayerPositionUpdateEvent(playerContext.Player, position, prevPosition), cancellationToken);
     }
   }
 }

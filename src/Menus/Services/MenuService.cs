@@ -23,7 +23,7 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
 
   public async ValueTask OpenAsync(Menu menu, CancellationToken cancellationToken)
   {
-    var player = playerContext.Player.AsMinecraftPlayer();
+    var player = playerContext.Player;
 
     var isPlayerInventory = menu.Type == "minecraft:inventory";
 
@@ -31,7 +31,7 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
     {
       CurrentMenu = menu;
 
-      logger.LogTrace($"Opening menu {menu.Name} for {player.Profile?.Username ?? "unknown"}");
+      logger.LogTrace($"Opening menu {menu.Name} for {PlayerExtensions.get_Profile(playerContext.Player)?.Username ?? "unknown"}");
       var openContainerPacket = new OpenContainerClientboundPacket
       {
         ContainerId = 1,
@@ -46,8 +46,6 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
 
   public async ValueTask CloseAsync(CancellationToken cancellationToken)
   {
-    var player = playerContext.Player.AsMinecraftPlayer();
-
     if (CurrentMenu is null)
       return;
 
@@ -58,7 +56,7 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
       ContainerId = 1
     };
 
-    await player.SendPacketAsync(closeContainerPacket, cancellationToken);
+    await playerContext.Player.SendPacketAsync(closeContainerPacket, cancellationToken);
   }
 
   public async ValueTask SetProperty(int property, int value, CancellationToken cancellationToken)
@@ -73,7 +71,7 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
       Value = value
     };
 
-    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(setContainerPropertyPacket, cancellationToken);
+    await playerContext.Player.SendPacketAsync(setContainerPropertyPacket, cancellationToken);
   }
 
   public async ValueTask UpdateSlotsAsync(Menu menu, CancellationToken cancellationToken)
@@ -96,8 +94,6 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
 
   public async ValueTask UpdateSlotAsync(Menu menu, int slot, CancellationToken cancellationToken)
   {
-    var player = playerContext.Player.AsMinecraftPlayer();
-
     var isPlayerInventory = menu.Type == "minecraft:inventory";
 
     ItemStack? itemStack = null;
@@ -124,7 +120,7 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
     }
 
     logger.LogTrace(
-      $"Setting slot {slot} in container {(isPlayerInventory ? 0 : 1)} to {itemStack?.Identifier ?? "air"} for {player.Profile?.Username ?? "unknown"}");
+      $"Setting slot {slot} in container {(isPlayerInventory ? 0 : 1)} to {itemStack?.Identifier ?? "air"} for {PlayerExtensions.get_Profile(playerContext.Player)?.Username ?? "unknown"}");
     var setSlotPacket = new SetContainerSlotClientboundPacket
     {
       ContainerId = isPlayerInventory ? 0 : 1,
@@ -132,7 +128,7 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
       ItemStack = itemStack
     };
 
-    await player.SendPacketAsync(setSlotPacket, cancellationToken);
+    await playerContext.Player.SendPacketAsync(setSlotPacket, cancellationToken);
   }
 
   public async ValueTask ClickSlotAsync(Menu menu, int slot, ClickType clickType, CancellationToken cancellationToken)
@@ -153,15 +149,13 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
     if (item is null)
       return;
 
-    var player = playerContext.Player.AsMinecraftPlayer();
-
     switch (clickType)
     {
       case ClickType.RightMouseButton when item.RightClickCommand is not null:
-        await commandService.ExecuteAsync(player, item.RightClickCommand, cancellationToken);
+        await commandService.ExecuteAsync(playerContext.Player, item.RightClickCommand, cancellationToken);
         break;
       case ClickType.LeftMouseButton when item.LeftClickCommand is not null:
-        await commandService.ExecuteAsync(player, item.LeftClickCommand, cancellationToken);
+        await commandService.ExecuteAsync(playerContext.Player, item.LeftClickCommand, cancellationToken);
         break;
     }
   }

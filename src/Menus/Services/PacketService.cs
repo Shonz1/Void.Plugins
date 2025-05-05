@@ -25,17 +25,15 @@ internal class PacketService(ILogger<PacketService> logger, IPlayerContext playe
 
   private void RegisterPlayPackets()
   {
-    var player = playerContext.Player.AsMinecraftPlayer();
+    playerContext.Player.RegisterPacket<SetContainerSlotClientboundPacket>(SetContainerSlotClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<SetContainerPropertyClientboundPacket>(SetContainerPropertyClientboundPacket.Mappings);
 
-    player.RegisterPacket<SetContainerSlotClientboundPacket>(SetContainerSlotClientboundPacket.Mappings);
-    player.RegisterPacket<SetContainerPropertyClientboundPacket>(SetContainerPropertyClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<OpenContainerClientboundPacket>(OpenContainerClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<CloseContainerClientboundPacket>(CloseContainerClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<CloseContainerServerboundPacket>(CloseContainerServerboundPacket.Mappings);
 
-    player.RegisterPacket<OpenContainerClientboundPacket>(OpenContainerClientboundPacket.Mappings);
-    player.RegisterPacket<CloseContainerClientboundPacket>(CloseContainerClientboundPacket.Mappings);
-    player.RegisterPacket<CloseContainerServerboundPacket>(CloseContainerServerboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<ClickContainerServerboundPacket>(ClickContainerServerboundPacket.Mappings);
 
-    player.RegisterPacket<ClickContainerServerboundPacket>(ClickContainerServerboundPacket.Mappings);
-
-    logger.LogInformation($"Registered play packets for {player.Profile?.Username ?? "unknown"}");
+    logger.LogInformation($"Registered play packets for {PlayerExtensions.get_Profile(playerContext.Player)?.Username ?? "unknown"}");
   }
 }

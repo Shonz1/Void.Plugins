@@ -18,7 +18,7 @@ public class BossBarService(IPlayerContext playerContext, BossBarsPlugin plugin)
   {
     bossBars.Add(bossBar.Id, bossBar);
 
-    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new AddBossBarAction(bossBar.Title, bossBar.Health, (int) bossBar.Color, (int) bossBar.Division, (int) bossBar.Flags)
@@ -29,7 +29,7 @@ public class BossBarService(IPlayerContext playerContext, BossBarsPlugin plugin)
   {
     bossBars.Remove(bossBar.Id);
 
-    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new RemoveBossBarAction()
@@ -43,7 +43,7 @@ public class BossBarService(IPlayerContext playerContext, BossBarsPlugin plugin)
 
     bossBars[bossBar.Id] = bossBar with { Title = value };
 
-    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new UpdateTitleBossBarAction(value)
@@ -57,7 +57,7 @@ public class BossBarService(IPlayerContext playerContext, BossBarsPlugin plugin)
 
     bossBars[bossBar.Id] = bossBar with { Health = value };
 
-    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new UpdateHealthBossBarAction(value)
@@ -89,7 +89,7 @@ public class BossBarService(IPlayerContext playerContext, BossBarsPlugin plugin)
 
     bossBars[bossBar.Id] = bossBar with { Color = colorValue, Division = divisionValue};
 
-    await playerContext.Player.AsMinecraftPlayer().SendPacketAsync(new BossBarClientboundPacket
+    await playerContext.Player.SendPacketAsync(new BossBarClientboundPacket
     {
       BossBarId = bossBar.Id,
       Action = new UpdateStyleBossBarAction((int) colorValue, (int) divisionValue)
