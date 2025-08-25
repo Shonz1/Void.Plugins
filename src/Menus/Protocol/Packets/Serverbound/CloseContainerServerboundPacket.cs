@@ -22,7 +22,8 @@ public class CloseContainerServerboundPacket : IMinecraftServerboundPacket<Close
     new(0x0C, ProtocolVersion.MINECRAFT_1_19_4),
     new(0x0E, ProtocolVersion.MINECRAFT_1_20_2),
     new(0x0F, ProtocolVersion.MINECRAFT_1_20_5),
-    new(0x11, ProtocolVersion.MINECRAFT_1_21_2)
+    new(0x11, ProtocolVersion.MINECRAFT_1_21_2),
+    new(0x12, ProtocolVersion.MINECRAFT_1_21_6),
   ];
 
   public static CloseContainerServerboundPacket Decode(ref MinecraftBuffer buffer, ProtocolVersion protocolVersion)

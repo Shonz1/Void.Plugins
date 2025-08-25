@@ -15,6 +15,8 @@
       <None Remove="Resources\1.21.2\registries.json" />
       <EmbeddedResource Include="Resources\1.21.2\registries.json" />
       <None Remove="Resources\1.21\registries.json" />
+      <EmbeddedResource Include="Resources\1.21.6\registries.json" />
+      <EmbeddedResource Include="Resources\1.21.7\registries.json" />
       <EmbeddedResource Include="Resources\1.21\registries.json" />
       <None Remove="Resources\1.20.5\registries.json" />
       <EmbeddedResource Include="Resources\1.20.5\registries.json" />

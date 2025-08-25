@@ -20,7 +20,7 @@ public class MinecraftItemRegistry
   public static int GetId(ProtocolVersion protocolVersion, Identifier identifier)
   {
     var assembly = typeof(MenusPlugin).Assembly;
-    var versionName = protocolVersion.GetVersionIntroducedIn();
+    var versionName = protocolVersion.VersionIntroducedIn;
 
     using var stream =
       assembly.GetManifestResourceStream(
@@ -45,7 +45,7 @@ public class MinecraftItemRegistry
   public static int GetMeta(ProtocolVersion protocolVersion, Identifier identifier)
   {
     var assembly = typeof(MenusPlugin).Assembly;
-    var versionName = protocolVersion.GetVersionIntroducedIn();
+    var versionName = protocolVersion.VersionIntroducedIn;
 
     using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources._{versionName.Replace(".", "._")}.registries.json");
     if (stream == null)
@@ -68,7 +68,7 @@ public class MinecraftItemRegistry
   public static Identifier GetIdentifier(ProtocolVersion protocolVersion, int itemId, int meta = 0)
   {
     var assembly = typeof(MenusPlugin).Assembly;
-    var versionName = protocolVersion.GetVersionIntroducedIn();
+    var versionName = protocolVersion.VersionIntroducedIn;
 
     using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources._{versionName.Replace(".", "._")}.registries.json");
     if (stream == null)

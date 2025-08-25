@@ -9,7 +9,8 @@ public class SetPlayerPositionAndRotationServerboundPacket : IMinecraftServerbou
 {
   public static readonly MinecraftPacketIdMapping[] Mappings = [
     new(0x06, ProtocolVersion.MINECRAFT_1_7_2),
-    new(0x1D, ProtocolVersion.MINECRAFT_1_21_5)
+    new(0x1D, ProtocolVersion.MINECRAFT_1_21_5),
+    new(0x1E, ProtocolVersion.MINECRAFT_1_21_6)
   ];
 
   public double X { get; set; }

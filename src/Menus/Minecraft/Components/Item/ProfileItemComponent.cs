@@ -12,7 +12,9 @@ public class ProfileItemComponent : IItemComponent<ProfileItemComponent>
     { ProtocolVersion.MINECRAFT_1_21, 0x2F },
     { ProtocolVersion.MINECRAFT_1_21_2, 0x39 },
     { ProtocolVersion.MINECRAFT_1_21_4, 0x39 },
-    { ProtocolVersion.MINECRAFT_1_21_5, 0x3D }
+    { ProtocolVersion.MINECRAFT_1_21_5, 0x3D },
+    { ProtocolVersion.MINECRAFT_1_21_6, 0x3D },
+    { ProtocolVersion.MINECRAFT_1_21_7, 0x3D }
   };
 
   public required GameProfile Value { get; set; }

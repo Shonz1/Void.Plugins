@@ -12,7 +12,9 @@ public class LoreItemComponent : IItemComponent<LoreItemComponent>
     { ProtocolVersion.MINECRAFT_1_21, 0x07 },
     { ProtocolVersion.MINECRAFT_1_21_2, 0x08 },
     { ProtocolVersion.MINECRAFT_1_21_4, 0x08 },
-    { ProtocolVersion.MINECRAFT_1_21_5, 0x08 }
+    { ProtocolVersion.MINECRAFT_1_21_5, 0x08 },
+    { ProtocolVersion.MINECRAFT_1_21_6, 0x08 },
+    { ProtocolVersion.MINECRAFT_1_21_7, 0x08 }
   };
 
   public required List<Component> Value { get; set; }

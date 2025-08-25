@@ -11,7 +11,9 @@ public class DamageItemComponent : IItemComponent<DamageItemComponent>
     { ProtocolVersion.MINECRAFT_1_21, 0x03 },
     { ProtocolVersion.MINECRAFT_1_21_2, 0x03 },
     { ProtocolVersion.MINECRAFT_1_21_4, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21_5, 0x03 }
+    { ProtocolVersion.MINECRAFT_1_21_5, 0x03 },
+    { ProtocolVersion.MINECRAFT_1_21_6, 0x03 },
+    { ProtocolVersion.MINECRAFT_1_21_7, 0x03 }
   };
 
   public int Value { get; set; }

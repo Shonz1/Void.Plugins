@@ -13,6 +13,8 @@ public class CustomNameItemComponent: IItemComponent<CustomNameItemComponent>
     { ProtocolVersion.MINECRAFT_1_21_2, 0x05 },
     { ProtocolVersion.MINECRAFT_1_21_4, 0x05 },
     { ProtocolVersion.MINECRAFT_1_21_5, 0x05 },
+    { ProtocolVersion.MINECRAFT_1_21_6, 0x05 },
+    { ProtocolVersion.MINECRAFT_1_21_7, 0x05 }
   };
 
   public static int GetId(ProtocolVersion protocolVersion) => Mappings[protocolVersion];

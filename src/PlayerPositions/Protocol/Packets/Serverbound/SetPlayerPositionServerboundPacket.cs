@@ -9,7 +9,8 @@ public class SetPlayerPositionServerboundPacket : IMinecraftServerboundPacket<Se
 {
   public static readonly MinecraftPacketIdMapping[] Mappings = [
     new(0x04, ProtocolVersion.MINECRAFT_1_7_2),
-    new(0x1C, ProtocolVersion.MINECRAFT_1_21_5)
+    new(0x1C, ProtocolVersion.MINECRAFT_1_21_5),
+    new(0x1D, ProtocolVersion.MINECRAFT_1_21_6)
   ];
 
   public double X { get; set; }

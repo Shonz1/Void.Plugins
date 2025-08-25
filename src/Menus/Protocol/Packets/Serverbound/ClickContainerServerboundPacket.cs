@@ -21,7 +21,8 @@ public class ClickContainerServerboundPacket : IMinecraftServerboundPacket<Click
     new(0x0B, ProtocolVersion.MINECRAFT_1_19_4),
     new(0x0D, ProtocolVersion.MINECRAFT_1_20_2),
     new(0x0E, ProtocolVersion.MINECRAFT_1_20_5),
-    new(0x10, ProtocolVersion.MINECRAFT_1_21_2)
+    new(0x10, ProtocolVersion.MINECRAFT_1_21_2),
+    new(0x11, ProtocolVersion.MINECRAFT_1_21_6),
   ];
 
   public int ContainerId { get; set; }
