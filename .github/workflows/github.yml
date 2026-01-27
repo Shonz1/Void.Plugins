@@ -1,9 +1,6 @@
 on:
   workflow_call:
     inputs:
-      tag-name:
-        type: string
-        required: true
       release-info:
         type: string
         required: true
