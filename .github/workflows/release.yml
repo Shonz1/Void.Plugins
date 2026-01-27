@@ -37,10 +37,10 @@ jobs:
     with:
       release-info: ${{ needs.semver.outputs.release-info }}
 
-  nuget:
-    needs: [build,semver]
-    uses: ./.github/workflows/nuget.yml
-    secrets: inherit
-    with:
-      dotnet-version: ${{ needs.semver.outputs.dotnet-version }}
-      release-info: ${{ needs.semver.outputs.release-info }}
+#  nuget:
+#    needs: [build,semver]
+#    uses: ./.github/workflows/nuget.yml
+#    secrets: inherit
+#    with:
+#      dotnet-version: ${{ needs.semver.outputs.dotnet-version }}
+#      release-info: ${{ needs.semver.outputs.release-info }}

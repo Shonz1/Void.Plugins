@@ -19,8 +19,23 @@ jobs:
           path: artifacts
           merge-multiple: true
 
-      - name: Upload Release Artifacts
+      - name: Upload BossBars Release Artifacts
+        if: ${{ fromJson(inputs.release-info)['src/BossBars--release_created'] }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload ${{ fromJSON(inputs.release-info).tag_name }} artifacts/*
+          gh release upload ${{ fromJSON(inputs.release-info)['src/BossBars--tag_name'] }} artifacts/void-bossbars.dll
+
+      - name: Upload Menus Release Artifacts
+        if: ${{ fromJson(inputs.release-info)['src/Menus--release_created'] }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ fromJSON(inputs.release-info)['src/Menus--tag_name'] }} artifacts/void-menus.dll
+
+      - name: Upload PlayerPositions Release Artifacts
+        if: ${{ fromJson(inputs.release-info)['src/PlayerPositions--release_created'] }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ fromJSON(inputs.release-info)['src/PlayerPositions--tag_name'] }} artifacts/void-player-positions.dll
