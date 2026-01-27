@@ -13,12 +13,15 @@
 
   "packages": {
     "src/BossBars": {
+      "path": "src/BossBars",
       "changelog-path": "CHANGELOG.md"
     },
     "src/Menus": {
+      "path": "src/Menus",
       "changelog-path": "CHANGELOG.md"
     },
     "src/PlayerPositions": {
+      "path": "src/PlayerPositions",
       "changelog-path": "CHANGELOG.md"
     }
   },
