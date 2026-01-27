@@ -26,4 +26,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload ${{ ${{ fromJSON(inputs.release-info).tag_name }} artifacts/*
+          gh release upload ${{ fromJSON(inputs.release-info).tag_name }} artifacts/*
