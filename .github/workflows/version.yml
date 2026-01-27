@@ -36,7 +36,7 @@ jobs:
     if: ${{ inputs.release-please }}
     runs-on: ubuntu-latest
     outputs:
-      info: ${{ steps.release.outputs }}
+      info: ${{ toJSON(steps.release.outputs) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

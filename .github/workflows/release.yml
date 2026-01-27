@@ -28,14 +28,14 @@ jobs:
     uses: ./.github/workflows/dotnet.yml
     with:
       dotnet-version: ${{ needs.semver.outputs.dotnet-version }}
-      release-info: ${{ toJSON(needs.semver.outputs.release-info) }}
+      release-info: ${{ needs.semver.outputs.release-info }}
 
   github:
     needs: [build,semver]
     uses: ./.github/workflows/github.yml
     secrets: inherit
     with:
-      release-info: ${{ toJSON(needs.semver.outputs.release-info) }}
+      release-info: ${{ needs.semver.outputs.release-info }}
 
   nuget:
     needs: [build,semver]
@@ -43,4 +43,4 @@ jobs:
     secrets: inherit
     with:
       dotnet-version: ${{ needs.semver.outputs.dotnet-version }}
-      release-info: ${{ toJSON(needs.semver.outputs.release-info) }}
+      release-info: ${{ needs.semver.outputs.release-info }}
