@@ -18,7 +18,7 @@
     "src/Menus": {
       "changelog-path": "CHANGELOG.md"
     },
-    "src/PlayerPosition": {
+    "src/PlayerPositions": {
       "changelog-path": "CHANGELOG.md"
     }
   },
