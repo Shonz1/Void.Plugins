@@ -13,16 +13,13 @@
 
   "packages": {
     "src/BossBars": {
-      "path": "src/BossBars",
-      "changelog-path": "CHANGELOG.md"
+      "component": "BossBars"
     },
     "src/Menus": {
-      "path": "src/Menus",
-      "changelog-path": "CHANGELOG.md"
+      "component": "Menus"
     },
     "src/PlayerPositions": {
-      "path": "src/PlayerPositions",
-      "changelog-path": "CHANGELOG.md"
+      "component": "PlayerPositions"
     }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
