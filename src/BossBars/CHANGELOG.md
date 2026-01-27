@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.0.3, released 2026-01-27
+
+
+### Bug fixes
+
+* **BossBars:** debug ([398aa76](https://github.com/Shonz1/Void.Plugins/commit/398aa76ec6c35aae5ac0e9a3f8a719543b3e54f0))
+
 ## Version 0.0.2, released 2026-01-27
 
 
