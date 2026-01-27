@@ -1,0 +1,44 @@
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        type: string
+        required: true
+      release-info:
+        type: string
+        required: true
+
+jobs:
+  push:
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    if: ${{ fromJson(inputs.release-info).release_created }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Build BossBars
+        run: dotnet build src/BossBars --configuration Release /p:Version=${{ fromJson(inputs.release-info)['./src/BossBars--version'] }}
+
+      - name: Pack BossBars
+        run: dotnet pack src/BossBars --configuration Release --output artifacts /p:Version=${{ fromJson(inputs.release-info)['./src/BossBars--version'] }}
+
+      - name: Rename BossBars Artifacts
+        shell: bash
+        run: mv artifacts/BossBars.${{ fromJson(inputs.release-info)['./src/BossBars--version'] }}.nupkg artifacts/void-bossbars.nupkg
+
+      - name: NuGet Push BossBars
+        run: dotnet nuget push artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+
+      - name: Upload a Pack Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: artifacts
+          compression-level: 9
+          if-no-files-found: error

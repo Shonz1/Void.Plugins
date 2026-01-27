@@ -1,0 +1,48 @@
+name: ".NET Release Workflow"
+
+permissions:
+  contents: write
+  id-token: write
+  issues: write
+  pages: write
+  pull-requests: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      dotnet-version:
+        description: "Full version of .NET SDK"
+        required: false
+  push:
+    branches: ["main"]
+
+jobs:
+  semver:
+    uses: ./.github/workflows/version.yml
+    secrets: inherit
+    with:
+      dotnet-version: ${{ github.event.inputs.dotnet-version }}
+
+  build:
+    needs: semver
+    uses: ./.github/workflows/dotnet.yml
+    with:
+      dotnet-version: ${{ needs.semver.outputs.dotnet-version }}
+      release-info: ${{ toJSON(needs.semver.outputs.release-info) }}
+
+  github:
+    needs: [build,semver]
+    uses: ./.github/workflows/github.yml
+    secrets: inherit
+    with:
+      tag-name: ${{ needs.semver.outputs.tag-name }}
+      release: ${{ needs.semver.outputs.release }}
+
+  nuget:
+    needs: [build,semver]
+    uses: ./.github/workflows/nuget.yml
+    secrets: inherit
+    with:
+      dotnet-version: ${{ needs.semver.outputs.dotnet-version }}
+      app-version: ${{ needs.semver.outputs.app-version }}
+      release: ${{ needs.semver.outputs.release }}

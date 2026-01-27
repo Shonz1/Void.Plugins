@@ -1,0 +1,50 @@
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        type: string
+        required: false
+      release-please:
+        type: boolean
+        required: false
+        default: true
+    outputs:
+      dotnet-version:
+        description: "Generated .NET Version"
+        value: ${{ jobs.dev.outputs.dotnet-version }}
+      release-info:
+        description: "Release Please Output"
+        value: ${{ jobs.release-please.outputs.info }}
+
+env:
+  DOTNET_VERSION: ${{ github.event.inputs.dotnet_version || join(fromJSON('["9.0.x","10.0.x"]'), '\n') }}
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    outputs:
+      dotnet-version: ${{ steps.dotnet-version.outputs.result }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set .NET SDK version
+        id: dotnet-version
+        run: printf 'result<<EOF\n%b\nEOF\n' "$DOTNET_VERSION" >> "$GITHUB_OUTPUT"
+
+  release-please:
+    if: ${{ inputs.release-please }}
+    runs-on: ubuntu-latest
+    outputs:
+      info: ${{ steps.release.outputs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .github/RELEASE_PLEASE/config.json
+          manifest-file: .github/RELEASE_PLEASE/manifest.json
