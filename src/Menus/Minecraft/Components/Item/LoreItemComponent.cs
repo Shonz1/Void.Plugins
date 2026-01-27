@@ -14,7 +14,9 @@ public class LoreItemComponent : IItemComponent<LoreItemComponent>
     { ProtocolVersion.MINECRAFT_1_21_4, 0x08 },
     { ProtocolVersion.MINECRAFT_1_21_5, 0x08 },
     { ProtocolVersion.MINECRAFT_1_21_6, 0x08 },
-    { ProtocolVersion.MINECRAFT_1_21_7, 0x08 }
+    { ProtocolVersion.MINECRAFT_1_21_7, 0x08 },
+    { ProtocolVersion.MINECRAFT_1_21_9, 0x08 },
+    { ProtocolVersion.MINECRAFT_1_21_11, 0x0B }
   };
 
   public required List<Component> Value { get; set; }
@@ -27,7 +29,7 @@ public class LoreItemComponent : IItemComponent<LoreItemComponent>
     var list = new List<Component>(size);
 
     for (var i = 0; i < size; i++)
-      list.Add(buffer.ReadComponent(ProtocolVersion.Latest));
+      list.Add(buffer.ReadComponent());
 
     return new LoreItemComponent
     {
@@ -40,6 +42,6 @@ public class LoreItemComponent : IItemComponent<LoreItemComponent>
     buffer.WriteVarInt(Value.Count);
 
     foreach (var component in Value)
-      buffer.WriteComponent(component, ProtocolVersion.Latest);
+      buffer.WriteComponent(component);
   }
 }

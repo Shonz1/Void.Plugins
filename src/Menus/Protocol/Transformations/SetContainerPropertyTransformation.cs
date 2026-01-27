@@ -2,7 +2,6 @@ using Microsoft.Extensions.Logging;
 using Void.Minecraft.Network;
 using Void.Minecraft.Network.Registries.Transformations.Mappings;
 using Void.Minecraft.Network.Registries.Transformations.Properties;
-using Void.Proxy.Api.Network;
 
 namespace Menus.Protocol.Transformations;
 
@@ -11,7 +10,7 @@ public class SetContainerPropertyTransformation(ILogger<SetContainerPropertyTran
   public void DowngradeTo_1_21(IMinecraftBinaryPacketWrapper wrapper,
     ProtocolVersion fromProtocolVersion, ProtocolVersion toProtocolVersion)
   {
-    if (wrapper.Origin != Side.Proxy)
+    if (fromProtocolVersion < toProtocolVersion)
       return;
 
     logger.LogTrace($"Downgrade to 1.21 {fromProtocolVersion} -> {toProtocolVersion}");

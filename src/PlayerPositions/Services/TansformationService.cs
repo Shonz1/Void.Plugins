@@ -6,6 +6,7 @@ using Void.Minecraft.Network;
 using Void.Minecraft.Network.Registries.Transformations.Mappings;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Events;
+using Void.Proxy.Api.Network.Channels;
 using Void.Proxy.Api.Players.Contexts;
 
 namespace PlayerPositions.Services;
@@ -45,23 +46,23 @@ internal class TransformationService(
     var handler = @event.Phase switch
     {
       Phase.Play => RegisterPlayTransformations,
-      _ => null as Action
+      _ => null as Action<INetworkChannel>
     };
 
-    handler?.Invoke();
+    handler?.Invoke(@event.Channel);
   }
 
-  private void RegisterPlayTransformations()
+  private void RegisterPlayTransformations(INetworkChannel channel)
   {
-    playerContext.Player.RegisterTransformations<SetPlayerPositionServerboundPacket>([
+    playerContext.Player.RegisterTransformations<SetPlayerPositionServerboundPacket>(channel, [
       ..RepeatForRange(ProtocolVersion.Latest, ProtocolVersion.MINECRAFT_1_21_4, setPlayerPositionTransformation.DowngradeTo_1_7_2)
     ]);
 
-    playerContext.Player.RegisterTransformations<SetPlayerRotationServerboundPacket>([
+    playerContext.Player.RegisterTransformations<SetPlayerRotationServerboundPacket>(channel, [
       ..RepeatForRange(ProtocolVersion.Latest, ProtocolVersion.MINECRAFT_1_21_4, setPlayerRotationTransformation.DowngradeTo_1_7_2)
     ]);
 
-    playerContext.Player.RegisterTransformations<SetPlayerPositionAndRotationServerboundPacket>([
+    playerContext.Player.RegisterTransformations<SetPlayerPositionAndRotationServerboundPacket>(channel, [
       ..RepeatForRange(ProtocolVersion.Latest, ProtocolVersion.MINECRAFT_1_21_4, setPlayerPositionAndRotationTransformation.DowngradeTo_1_7_2)
     ]);
 

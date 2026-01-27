@@ -1,7 +1,9 @@
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Network;
 using Void.Minecraft.Network.Messages.Packets;
 using Void.Minecraft.Network.Registries.PacketId.Mappings;
+using Void.Proxy.Api.Network;
 
 namespace PlayerPositions.Protocol.Packets.Serverbound;
 
@@ -9,8 +11,11 @@ public class SetPlayerPositionAndRotationServerboundPacket : IMinecraftServerbou
 {
   public static readonly MinecraftPacketIdMapping[] Mappings = [
     new(0x06, ProtocolVersion.MINECRAFT_1_7_2),
-    new(0x1D, ProtocolVersion.MINECRAFT_1_21_5),
-    new(0x1E, ProtocolVersion.MINECRAFT_1_21_6)
+
+    .. ProtocolVersion
+      .Range(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.Latest)
+      .Select(i => new MinecraftPacketIdMapping(
+        MinecraftPacketRegistry.GetId(i, Phase.Play, Direction.Serverbound, "minecraft:move_player_pos_rot"), i))
   ];
 
   public double X { get; set; }

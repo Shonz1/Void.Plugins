@@ -1,10 +1,10 @@
 using Menus.Api;
 using Menus.Minecraft;
 using Menus.Minecraft.Components.Item;
-using Menus.Minecraft.Registry;
 using Menus.Protocol.Packets.Clientbound;
 using Menus.Protocol.Packets.Serverbound;
 using Microsoft.Extensions.Logging;
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Network;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Commands;
@@ -109,7 +109,7 @@ public class MenuService(ILogger<MenuService> logger, IPlayerContext playerConte
         components.Add(new LoreItemComponent { Value = item.Lore });
 
       if (item.Profile is not null)
-        components.Add(new ProfileItemComponent { Value = item.Profile });
+        components.Add(new ResolvableProfileItemComponent { Kind = Kind.Partial, Profile = item.Profile });
 
       itemStack = new ItemStack
       {

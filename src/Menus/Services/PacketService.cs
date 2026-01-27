@@ -5,6 +5,8 @@ using Void.Minecraft.Events;
 using Void.Minecraft.Network;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Events;
+using Void.Proxy.Api.Network;
+using Void.Proxy.Api.Network.Channels;
 using Void.Proxy.Api.Players.Contexts;
 
 namespace Menus.Services;
@@ -14,26 +16,44 @@ internal class PacketService(ILogger<PacketService> logger, IPlayerContext playe
   [Subscribe]
   private void OnPhaseChanged(PhaseChangedEvent @event)
   {
-    var handler = @event.Phase switch
+    Action<INetworkChannel>? handler = @event.Phase switch
     {
-      Phase.Play => RegisterPlayPackets,
-      _ => null as Action
+      Phase.Play => @event.Side switch {
+        Side.Server => RegisterPlayForServerPackets,
+        Side.Client => RegisterPlayForClientPackets,
+        _ => null
+      },
+      _ => null
     };
 
-    handler?.Invoke();
+    handler?.Invoke(@event.Channel);
   }
 
-  private void RegisterPlayPackets()
+  private void RegisterPlayForServerPackets(INetworkChannel channel)
   {
-    playerContext.Player.RegisterPacket<SetContainerSlotClientboundPacket>(SetContainerSlotClientboundPacket.Mappings);
-    playerContext.Player.RegisterPacket<SetContainerPropertyClientboundPacket>(SetContainerPropertyClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<SetContainerSlotClientboundPacket>(channel, Operation.Read, SetContainerSlotClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<SetContainerPropertyClientboundPacket>(channel, Operation.Read, SetContainerPropertyClientboundPacket.Mappings);
 
-    playerContext.Player.RegisterPacket<OpenContainerClientboundPacket>(OpenContainerClientboundPacket.Mappings);
-    playerContext.Player.RegisterPacket<CloseContainerClientboundPacket>(CloseContainerClientboundPacket.Mappings);
-    playerContext.Player.RegisterPacket<CloseContainerServerboundPacket>(CloseContainerServerboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<OpenContainerClientboundPacket>(channel, Operation.Read, OpenContainerClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<CloseContainerClientboundPacket>(channel, Operation.Read, CloseContainerClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<CloseContainerServerboundPacket>(channel, Operation.Write, CloseContainerServerboundPacket.Mappings);
 
-    playerContext.Player.RegisterPacket<ClickContainerServerboundPacket>(ClickContainerServerboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<ClickContainerServerboundPacket>(channel, Operation.Write, ClickContainerServerboundPacket.Mappings);
 
-    logger.LogInformation($"Registered play packets for {PlayerExtensions.get_Profile(playerContext.Player)?.Username ?? "unknown"}");
+    logger.LogInformation($"Registered play packets to server for {playerContext.Player}");
+  }
+
+  private void RegisterPlayForClientPackets(INetworkChannel channel)
+  {
+    playerContext.Player.RegisterPacket<SetContainerSlotClientboundPacket>(channel, Operation.Write, SetContainerSlotClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<SetContainerPropertyClientboundPacket>(channel, Operation.Write, SetContainerPropertyClientboundPacket.Mappings);
+
+    playerContext.Player.RegisterPacket<OpenContainerClientboundPacket>(channel, Operation.Write, OpenContainerClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<CloseContainerClientboundPacket>(channel, Operation.Write, CloseContainerClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<CloseContainerServerboundPacket>(channel, Operation.Read, CloseContainerServerboundPacket.Mappings);
+
+    playerContext.Player.RegisterPacket<ClickContainerServerboundPacket>(channel, Operation.Read, ClickContainerServerboundPacket.Mappings);
+
+    logger.LogInformation($"Registered play packets to client for {playerContext.Player}");
   }
 }

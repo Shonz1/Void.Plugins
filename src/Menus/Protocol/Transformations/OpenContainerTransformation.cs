@@ -1,5 +1,5 @@
-using Menus.Minecraft.Registry;
 using Microsoft.Extensions.Logging;
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Components.Text.Serializers;
 using Void.Minecraft.Network;
 using Void.Minecraft.Network.Registries.Transformations.Mappings;

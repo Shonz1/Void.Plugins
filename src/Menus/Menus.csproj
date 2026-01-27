@@ -1,118 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <DebugType>embedded</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Resources\1.21.5\registries.json" />
-      <EmbeddedResource Include="Resources\1.21.5\registries.json" />
-      <None Remove="Resources\1.21.4\registries.json" />
-      <EmbeddedResource Include="Resources\1.21.4\registries.json" />
-      <None Remove="Resources\1.21.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.21.2\registries.json" />
-      <None Remove="Resources\1.21\registries.json" />
-      <EmbeddedResource Include="Resources\1.21.6\registries.json" />
-      <EmbeddedResource Include="Resources\1.21.7\registries.json" />
-      <EmbeddedResource Include="Resources\1.21\registries.json" />
-      <None Remove="Resources\1.20.5\registries.json" />
-      <EmbeddedResource Include="Resources\1.20.5\registries.json" />
-      <None Remove="Resources\1.20.3\registries.json" />
-      <EmbeddedResource Include="Resources\1.20.3\registries.json" />
-      <None Remove="Resources\1.20.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.20.2\registries.json" />
-      <None Remove="Resources\1.20\registries.json" />
-      <EmbeddedResource Include="Resources\1.20\registries.json" />
-      <None Remove="Resources\1.19.4\registries.json" />
-      <EmbeddedResource Include="Resources\1.19.4\registries.json" />
-      <None Remove="Resources\1.19.3\registries.json" />
-      <EmbeddedResource Include="Resources\1.19.3\registries.json" />
-      <None Remove="Resources\1.19.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.19.1\registries.json" />
-      <None Remove="Resources\1.19\registries.json" />
-      <EmbeddedResource Include="Resources\1.19\registries.json" />
-      <None Remove="Resources\1.18.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.18.2\registries.json" />
-      <None Remove="Resources\1.18\registries.json" />
-      <EmbeddedResource Include="Resources\1.18\registries.json" />
-      <None Remove="Resources\1.17.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.17.1\registries.json" />
-      <None Remove="Resources\1.17\registries.json" />
-      <EmbeddedResource Include="Resources\1.17\registries.json" />
-      <None Remove="Resources\1.16.4\registries.json" />
-      <EmbeddedResource Include="Resources\1.16.4\registries.json" />
-      <None Remove="Resources\1.16.3\registries.json" />
-      <EmbeddedResource Include="Resources\1.16.3\registries.json" />
-      <None Remove="Resources\1.16.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.16.2\registries.json" />
-      <None Remove="Resources\1.16.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.16.1\registries.json" />
-      <None Remove="Resources\1.16\registries.json" />
-      <EmbeddedResource Include="Resources\1.16\registries.json" />
-      <None Remove="Resources\1.15.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.15.2\registries.json" />
-      <None Remove="Resources\1.15.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.15.1\registries.json" />
-      <None Remove="Resources\1.15\registries.json" />
-      <EmbeddedResource Include="Resources\1.15\registries.json" />
-      <None Remove="Resources\1.14.4\registries.json" />
-      <EmbeddedResource Include="Resources\1.14.4\registries.json" />
-      <None Remove="Resources\1.14.3\registries.json" />
-      <EmbeddedResource Include="Resources\1.14.3\registries.json" />
-      <None Remove="Resources\1.14.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.14.2\registries.json" />
-      <None Remove="Resources\1.14.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.14.1\registries.json" />
-      <None Remove="Resources\1.14\registries.json" />
-      <EmbeddedResource Include="Resources\1.14\registries.json" />
-      <None Remove="Resources\1.13.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.13.2\registries.json" />
-      <None Remove="Resources\1.13.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.13.1\registries.json" />
-      <None Remove="Resources\1.13\registries.json" />
-      <EmbeddedResource Include="Resources\1.13\registries.json" />
-      <None Remove="Resources\1.12.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.12.2\registries.json" />
-      <None Remove="Resources\1.12.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.12.1\registries.json" />
-      <None Remove="Resources\1.12\registries.json" />
-      <EmbeddedResource Include="Resources\1.12\registries.json" />
-      <None Remove="Resources\1.11.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.11.1\registries.json" />
-      <None Remove="Resources\1.11\registries.json" />
-      <EmbeddedResource Include="Resources\1.11\registries.json" />
-      <None Remove="Resources\1.10\registries.json" />
-      <EmbeddedResource Include="Resources\1.10\registries.json" />
-      <None Remove="Resources\1.9.3\registries.json" />
-      <EmbeddedResource Include="Resources\1.9.3\registries.json" />
-      <None Remove="Resources\1.9.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.9.2\registries.json" />
-      <None Remove="Resources\1.9.1\registries.json" />
-      <EmbeddedResource Include="Resources\1.9.1\registries.json" />
-      <None Remove="Resources\1.9\registries.json" />
-      <EmbeddedResource Include="Resources\1.9\registries.json" />
-      <None Remove="Resources\1.8\registries.json" />
-      <EmbeddedResource Include="Resources\1.8\registries.json" />
-      <None Remove="Resources\1.7.6\registries.json" />
-      <EmbeddedResource Include="Resources\1.7.6\registries.json" />
-      <None Remove="Resources\1.7.2\registries.json" />
-      <EmbeddedResource Include="Resources\1.7.2\registries.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Void.Minecraft">
-        <HintPath>..\..\..\Void\src\Minecraft\bin\Debug\net9.0\Void.Minecraft.dll</HintPath>
-      </Reference>
-      <Reference Include="Void.Proxy.Api">
-        <HintPath>..\..\..\Void\src\Api\bin\Debug\net9.0\Void.Proxy.Api.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.4" />
+      <PackageReference Include="Void.Minecraft" Version="0.5.6" />
+      <PackageReference Include="Void.Proxy.Api" Version="*-*" />
+      <PackageReference Include="Void.Data" Version="0.1.8" />
     </ItemGroup>
 
 </Project>

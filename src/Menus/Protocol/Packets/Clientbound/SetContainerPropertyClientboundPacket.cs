@@ -1,7 +1,9 @@
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Network;
 using Void.Minecraft.Network.Messages.Packets;
 using Void.Minecraft.Network.Registries.PacketId.Mappings;
+using Void.Proxy.Api.Network;
 
 namespace Menus.Protocol.Packets.Clientbound;
 
@@ -20,7 +22,11 @@ public class SetContainerPropertyClientboundPacket : IMinecraftClientboundPacket
     new(0x11, ProtocolVersion.MINECRAFT_1_19_3),
     new(0x13, ProtocolVersion.MINECRAFT_1_19_4),
     new(0x14, ProtocolVersion.MINECRAFT_1_20_2),
-    new(0x13, ProtocolVersion.MINECRAFT_1_21_5),
+
+    .. ProtocolVersion
+      .Range(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.Latest)
+      .Select(i => new MinecraftPacketIdMapping(
+        MinecraftPacketRegistry.GetId(i, Phase.Play, Direction.Clientbound, "minecraft:container_set_data"), i))
   ];
 
   public int ContainerId { get; set; }

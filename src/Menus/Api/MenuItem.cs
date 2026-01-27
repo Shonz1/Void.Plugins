@@ -1,4 +1,4 @@
-using Menus.Minecraft;
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Components.Text;
 using Void.Minecraft.Profiles;
 

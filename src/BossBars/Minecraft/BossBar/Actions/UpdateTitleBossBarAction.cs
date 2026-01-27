@@ -1,6 +1,5 @@
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Components.Text;
-using Void.Minecraft.Network;
 
 namespace BossBars.Minecraft.BossBar.Actions;
 
@@ -10,11 +9,11 @@ public record UpdateTitleBossBarAction(Component Title) : IBossBarAction<UpdateT
 
   public static UpdateTitleBossBarAction Read(ref MinecraftBuffer buffer)
   {
-    return new UpdateTitleBossBarAction(buffer.ReadComponent(ProtocolVersion.Latest));
+    return new UpdateTitleBossBarAction(buffer.ReadComponent());
   }
 
   public void Write(ref MinecraftBuffer buffer)
   {
-    buffer.WriteComponent(Title, ProtocolVersion.Latest);
+    buffer.WriteComponent(Title);
   }
 }

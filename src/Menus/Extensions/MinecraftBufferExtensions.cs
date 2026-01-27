@@ -1,6 +1,6 @@
 using Menus.Minecraft;
 using Menus.Minecraft.Components.Item;
-using Menus.Minecraft.Registry;
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Network;
 
@@ -26,7 +26,7 @@ public static class MinecraftBufferExtensions
 
     foreach (var component in itemStack.Components)
     {
-      var decodeMethod = component.GetType().GetMethod(nameof(IItemComponent<IItemComponent>.GetId));
+      var decodeMethod = component.GetType().GetMethod(nameof(IItemComponent<>.GetId));
       if (decodeMethod is null)
         throw new Exception("Unable to find GetId method.");
 
@@ -34,7 +34,7 @@ public static class MinecraftBufferExtensions
       if (id is null)
         throw new Exception("Unable to find GetId method.");
 
-      buffer.WriteVarInt((int) id);
+      buffer.WriteVarInt((int)id);
       component.Write(ref buffer);
     }
   }

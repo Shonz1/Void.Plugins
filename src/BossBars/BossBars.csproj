@@ -1,23 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <DebugType>embedded</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="Void.Minecraft">
-        <HintPath>..\..\..\Void\src\Minecraft\bin\Debug\net9.0\Void.Minecraft.dll</HintPath>
-      </Reference>
-      <Reference Include="Void.Proxy.Api">
-        <HintPath>..\..\..\Void\src\Api\bin\Debug\net9.0\Void.Proxy.Api.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.4" />
+      <PackageReference Include="Void.Minecraft" Version="0.5.6" />
+      <PackageReference Include="Void.Proxy.Api" Version="*-*" />
+      <PackageReference Include="Void.Data" Version="0.1.8" />
     </ItemGroup>
 
 </Project>

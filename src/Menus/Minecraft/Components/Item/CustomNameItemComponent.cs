@@ -14,7 +14,9 @@ public class CustomNameItemComponent: IItemComponent<CustomNameItemComponent>
     { ProtocolVersion.MINECRAFT_1_21_4, 0x05 },
     { ProtocolVersion.MINECRAFT_1_21_5, 0x05 },
     { ProtocolVersion.MINECRAFT_1_21_6, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21_7, 0x05 }
+    { ProtocolVersion.MINECRAFT_1_21_7, 0x05 },
+    { ProtocolVersion.MINECRAFT_1_21_9, 0x05 },
+    { ProtocolVersion.MINECRAFT_1_21_11, 0x06 }
   };
 
   public static int GetId(ProtocolVersion protocolVersion) => Mappings[protocolVersion];
@@ -25,12 +27,12 @@ public class CustomNameItemComponent: IItemComponent<CustomNameItemComponent>
   {
     return new CustomNameItemComponent
     {
-      Value = buffer.ReadComponent(ProtocolVersion.Latest)
+      Value = buffer.ReadComponent()
     };
   }
 
   public void Write(ref MinecraftBuffer buffer)
   {
-    buffer.WriteComponent(Value, ProtocolVersion.Latest);
+    buffer.WriteComponent(Value);
   }
 }

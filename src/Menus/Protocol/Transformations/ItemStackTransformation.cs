@@ -1,8 +1,8 @@
 using System.IO.Compression;
 using Menus.Minecraft.Components.Item;
-using Menus.Minecraft.Registry;
 using Menus.Protocol.Transformations.Properties;
 using Microsoft.Extensions.Logging;
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Components.Text.Serializers;
 using Void.Minecraft.Nbt;
 using Void.Minecraft.Nbt.Tags;
@@ -25,7 +25,8 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
     if (fromProtocolVersion > ProtocolVersion.MINECRAFT_1_20_3 && toProtocolVersion <= ProtocolVersion.MINECRAFT_1_20_3)
       FromComponentToNbt(wrapper, fromProtocolVersion, toProtocolVersion);
 
-    if (fromProtocolVersion > ProtocolVersion.MINECRAFT_1_20 && fromProtocolVersion <= ProtocolVersion.MINECRAFT_1_20_3 && toProtocolVersion > ProtocolVersion.MINECRAFT_1_20)
+    if (fromProtocolVersion > ProtocolVersion.MINECRAFT_1_20 &&
+        fromProtocolVersion <= ProtocolVersion.MINECRAFT_1_20_3 && toProtocolVersion > ProtocolVersion.MINECRAFT_1_20)
       PassthroughNbt(wrapper, fromProtocolVersion, toProtocolVersion);
 
     if (fromProtocolVersion > ProtocolVersion.MINECRAFT_1_20 && toProtocolVersion <= ProtocolVersion.MINECRAFT_1_20)
@@ -71,13 +72,14 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
     var count = wrapper.Read<ByteProperty>();
     var itemMeta = wrapper.Read<ShortProperty>();
 
-    var itemIdentifier = MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive, itemMeta.AsPrimitive);
+    var itemIdentifier =
+      MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive, itemMeta.AsPrimitive);
     var updatedItemId = MinecraftItemRegistry.GetId(toProtocolVersion, itemIdentifier);
     var updatedItemMeta = MinecraftItemRegistry.GetMeta(toProtocolVersion, itemIdentifier);
 
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemId));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemId));
     wrapper.Write(count);
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemMeta));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemMeta));
 
     wrapper.Passthrough<ShortProperty>(); // Nbt size
     wrapper.Passthrough<BinaryProperty>(); // Gziped nbt
@@ -98,13 +100,14 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
     var count = wrapper.Read<ByteProperty>();
     var itemMeta = wrapper.Read<ShortProperty>();
 
-    var itemIdentifier = MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive, itemMeta.AsPrimitive);
+    var itemIdentifier =
+      MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive, itemMeta.AsPrimitive);
     var updatedItemId = MinecraftItemRegistry.GetId(toProtocolVersion, itemIdentifier);
     var updatedItemMeta = MinecraftItemRegistry.GetMeta(toProtocolVersion, itemIdentifier);
 
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemId));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemId));
     wrapper.Write(count);
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemMeta));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemMeta));
 
     var nbt = wrapper.Read<NamedNbtProperty>();
     var nbtStream = nbt.AsNbtTag.AsStream();
@@ -115,7 +118,7 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
       dstream.Write(nbtBuffer, 0, nbtBuffer.Length);
 
     var binary = BinaryProperty.FromStream(gzipStream);
-    wrapper.Write(ShortProperty.FromPrimitive((short) binary.Value.Length));
+    wrapper.Write(ShortProperty.FromPrimitive((short)binary.Value.Length));
     wrapper.Write(binary);
   }
 
@@ -134,13 +137,14 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
     var count = wrapper.Read<ByteProperty>();
     var itemMeta = wrapper.Read<ShortProperty>();
 
-    var itemIdentifier = MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive, itemMeta.AsPrimitive);
+    var itemIdentifier =
+      MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive, itemMeta.AsPrimitive);
     var updatedItemId = MinecraftItemRegistry.GetId(toProtocolVersion, itemIdentifier);
     var updatedItemMeta = MinecraftItemRegistry.GetMeta(toProtocolVersion, itemIdentifier);
 
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemId));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemId));
     wrapper.Write(count);
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemMeta));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemMeta));
 
     wrapper.Passthrough<NamedNbtProperty>(); // Nbt
   }
@@ -160,10 +164,10 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
     var itemIdentifier = MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive);
     var updatedItemId = MinecraftItemRegistry.GetId(toProtocolVersion, itemIdentifier);
     var itemMeta = MinecraftItemRegistry.GetMeta(toProtocolVersion, itemIdentifier);
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemId));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemId));
 
     wrapper.Passthrough<ByteProperty>(); // Count
-    wrapper.Write(ShortProperty.FromPrimitive((short) itemMeta)); // Damage
+    wrapper.Write(ShortProperty.FromPrimitive((short)itemMeta)); // Damage
 
     var nbt = wrapper.Read<NamedNbtProperty>().AsNbtTag;
     if (nbt is NbtCompound compound)
@@ -197,7 +201,7 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
 
     var itemIdentifier = MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive);
     var updatedItemId = MinecraftItemRegistry.GetId(toProtocolVersion, itemIdentifier);
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemId));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemId));
 
     wrapper.Passthrough<ByteProperty>(); // Count
     wrapper.Passthrough<NamedNbtProperty>(); // Nbt
@@ -218,7 +222,7 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
     var itemId = wrapper.Read<VarIntProperty>();
     var itemIdentifier = MinecraftItemRegistry.GetIdentifier(fromProtocolVersion, itemId.AsPrimitive);
     var updatedItemId = MinecraftItemRegistry.GetId(toProtocolVersion, itemIdentifier);
-    wrapper.Write(ShortProperty.FromPrimitive((short) updatedItemId));
+    wrapper.Write(ShortProperty.FromPrimitive((short)updatedItemId));
 
     wrapper.Passthrough<ByteProperty>(); // Count
     wrapper.Passthrough<NamedNbtProperty>(); // Nbt
@@ -379,7 +383,7 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
           if (customDataItemComponent.Value is not NbtCompound customDataTag)
             break;
 
-          foreach (var (key, value) in customDataTag.Values)
+          foreach (var (key, value) in customDataTag.Fields)
             compoundTag[key] = value;
 
           break;
@@ -426,7 +430,7 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
       }
     }
 
-    if (displayTag.Values.Count > 0)
+    if (displayTag.Fields.Count > 0)
       compoundTag["display"] = displayTag;
 
     wrapper.Write(NbtProperty.FromNbtTag(compoundTag));
@@ -490,6 +494,26 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
       {
         wrapper.Write(VarIntProperty.FromPrimitive(ProfileItemComponent.GetId(toProtocolVersion)));
         wrapper.Passthrough<ProfileItemComponentProperty>();
+        continue;
+      }
+
+      var resolvableProfileItemComponentId = ResolvableProfileItemComponent.GetId(fromProtocolVersion);
+      if (resolvableProfileItemComponentId == componentId.AsPrimitive)
+      {
+        // Special case: 1.21.8 changed from ProfileItemComponent to ResolvableProfileItemComponent
+        if (fromProtocolVersion > ProtocolVersion.MINECRAFT_1_21_7 &&
+            toProtocolVersion <= ProtocolVersion.MINECRAFT_1_21_7)
+        {
+          wrapper.Write(VarIntProperty.FromPrimitive(ProfileItemComponent.GetId(toProtocolVersion)));
+
+          var resolvableProfileComponent = wrapper.Read<ResolvableProfileItemComponentProperty>().Value;
+          wrapper.Write(new ProfileItemComponentProperty(new ProfileItemComponent
+            { Value = resolvableProfileComponent.Profile }));
+          continue;
+        }
+
+        wrapper.Write(VarIntProperty.FromPrimitive(ResolvableProfileItemComponent.GetId(toProtocolVersion)));
+        wrapper.Passthrough<ResolvableProfileItemComponentProperty>();
         continue;
       }
 

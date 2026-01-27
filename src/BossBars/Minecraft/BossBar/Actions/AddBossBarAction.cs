@@ -1,6 +1,5 @@
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Components.Text;
-using Void.Minecraft.Network;
 
 namespace BossBars.Minecraft.BossBar.Actions;
 
@@ -11,7 +10,7 @@ public record AddBossBarAction(Component Title, float Health, int Color, int Div
   public static AddBossBarAction Read(ref MinecraftBuffer buffer)
   {
     return new AddBossBarAction(
-      buffer.ReadComponent(ProtocolVersion.Latest),
+      buffer.ReadComponent(),
       buffer.ReadFloat(),
       buffer.ReadVarInt(),
       buffer.ReadVarInt(),
@@ -21,7 +20,7 @@ public record AddBossBarAction(Component Title, float Health, int Color, int Div
 
   public void Write(ref MinecraftBuffer buffer)
   {
-    buffer.WriteComponent(Title, ProtocolVersion.Latest);
+    buffer.WriteComponent(Title);
     buffer.WriteFloat(Health);
     buffer.WriteVarInt(Color);
     buffer.WriteVarInt(Division);

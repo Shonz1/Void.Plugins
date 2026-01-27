@@ -4,6 +4,8 @@ using Void.Minecraft.Events;
 using Void.Minecraft.Network;
 using Void.Minecraft.Players.Extensions;
 using Void.Proxy.Api.Events;
+using Void.Proxy.Api.Network;
+using Void.Proxy.Api.Network.Channels;
 using Void.Proxy.Api.Players.Contexts;
 
 namespace BossBars.Services;
@@ -13,19 +15,30 @@ internal class PacketService(ILogger<PacketService> logger, IPlayerContext playe
   [Subscribe]
   private void OnPhaseChanged(PhaseChangedEvent @event)
   {
-    var handler = @event.Phase switch
+    Action<INetworkChannel>? handler = @event.Phase switch
     {
-      Phase.Play => RegisterPlayPackets,
-      _ => null as Action
+      Phase.Play => @event.Side switch {
+        Side.Server => RegisterPlayForServerPackets,
+        Side.Client => RegisterPlayForClientPackets,
+        _ => null
+      },
+      _ => null
     };
 
-    handler?.Invoke();
+    handler?.Invoke(@event.Channel);
   }
 
-  private void RegisterPlayPackets()
+  private void RegisterPlayForServerPackets(INetworkChannel channel)
   {
-    playerContext.Player.RegisterPacket<BossBarClientboundPacket>(BossBarClientboundPacket.Mappings);
+    playerContext.Player.RegisterPacket<BossBarClientboundPacket>(channel, Operation.Read, BossBarClientboundPacket.Mappings);
 
-    logger.LogInformation($"Registered play packets for {PlayerExtensions.get_Profile(playerContext.Player)?.Username ?? "unknown"}");
+    logger.LogInformation($"Registered play packets to server for {playerContext.Player}");
+  }
+
+  private void RegisterPlayForClientPackets(INetworkChannel channel)
+  {
+    playerContext.Player.RegisterPacket<BossBarClientboundPacket>(channel, Operation.Write, BossBarClientboundPacket.Mappings);
+
+    logger.LogInformation($"Registered play packets to client for {playerContext.Player}");
   }
 }

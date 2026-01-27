@@ -14,7 +14,9 @@ public class CustomDataItemComponent : IItemComponent<CustomDataItemComponent>
     { ProtocolVersion.MINECRAFT_1_21_4, 0x00 },
     { ProtocolVersion.MINECRAFT_1_21_5, 0x00 },
     { ProtocolVersion.MINECRAFT_1_21_6, 0x00 },
-    { ProtocolVersion.MINECRAFT_1_21_7, 0x00 }
+    { ProtocolVersion.MINECRAFT_1_21_7, 0x00 },
+    { ProtocolVersion.MINECRAFT_1_21_9, 0x00 },
+    { ProtocolVersion.MINECRAFT_1_21_11, 0x00 }
   };
 
   public static int GetId(ProtocolVersion protocolVersion) => Mappings[protocolVersion];
