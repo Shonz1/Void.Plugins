@@ -35,8 +35,7 @@ jobs:
     uses: ./.github/workflows/github.yml
     secrets: inherit
     with:
-      tag-name: ${{ needs.semver.outputs.tag-name }}
-      release: ${{ needs.semver.outputs.release }}
+      release-info: ${{ toJSON(needs.semver.outputs.release-info) }}
 
   nuget:
     needs: [build,semver]
@@ -44,5 +43,4 @@ jobs:
     secrets: inherit
     with:
       dotnet-version: ${{ needs.semver.outputs.dotnet-version }}
-      app-version: ${{ needs.semver.outputs.app-version }}
-      release: ${{ needs.semver.outputs.release }}
+      release-info: ${{ toJSON(needs.semver.outputs.release-info) }}
