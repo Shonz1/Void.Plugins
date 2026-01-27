@@ -17,6 +17,8 @@ public class BossBarsPlugin(IDependencyService dependencyService) : IApiPlugin
     if (@event.Plugin != this)
       return;
 
+    Console.WriteLine("Testing BossBars Plugin");
+
     dependencyService.Register(services =>
     {
       services.AddScoped<PacketService>();
