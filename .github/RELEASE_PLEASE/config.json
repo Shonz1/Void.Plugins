@@ -1,6 +1,6 @@
 {
   "packages": {
-    "./src/BossBars": {
+    "src/BossBars": {
       "release-type": "simple",
       "versioning": "prerelease",
       "include-v-in-tag": true,
@@ -11,7 +11,7 @@
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true
     },
-    "./src/Menus": {
+    "src/Menus": {
       "release-type": "simple",
       "versioning": "prerelease",
       "include-v-in-tag": true,
@@ -22,7 +22,7 @@
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true
     },
-    "./src/PlayerPosition": {
+    "src/PlayerPosition": {
       "release-type": "simple",
       "versioning": "prerelease",
       "include-v-in-tag": true,
