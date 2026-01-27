@@ -24,6 +24,11 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Build BossBars
+        if: ${{ !fromJson(inputs.release-info)['./src/BossBars--release_created'] }}
+        run: dotnet build src/BossBars --configuration Release
+
+      - name: Build BossBars
+        if: ${{ fromJson(inputs.release-info)['./src/BossBars--release_created'] }}
         run: dotnet build src/BossBars --configuration Release /p:Version=${{ fromJson(inputs.release-info)['./src/BossBars--version'] }}
 
       - name: Publish BossBars
