@@ -50,4 +50,5 @@ jobs:
           manifest-file: .github/RELEASE_PLEASE/manifest.json
 
       - name: Print Release Info
+        continue-on-error: true
         run: echo "${{ toJSON(steps.release.outputs) }}"
