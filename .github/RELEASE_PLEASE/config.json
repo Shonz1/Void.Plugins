@@ -12,9 +12,15 @@
   "bump-patch-for-minor-pre-major": true,
 
   "packages": {
-    "src/BossBars": {},
-    "src/Menus": {},
-    "src/PlayerPosition": {}
+    "src/BossBars": {
+      "changelog-path": "CHANGELOG.md"
+    },
+    "src/Menus": {
+      "changelog-path": "CHANGELOG.md"
+    },
+    "src/PlayerPosition": {
+      "changelog-path": "CHANGELOG.md"
+    }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }
