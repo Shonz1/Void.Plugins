@@ -38,9 +38,6 @@ jobs:
     outputs:
       info: ${{ toJSON(steps.release.outputs) }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Create Release
         id: release
         uses: googleapis/release-please-action@v4
