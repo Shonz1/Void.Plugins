@@ -1,4 +1,5 @@
 {
+  "separate-pull-requests": true,
   "packages": {
     "src/BossBars": {
       "release-type": "simple",
