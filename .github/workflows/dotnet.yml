@@ -40,15 +40,6 @@ jobs:
         if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
         shell: bash
         run: mv artifacts/Void.Plugins.BossBars.dll artifacts/void-bossbars.dll
-
-      - name: Upload a BossBars Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-bossbars.dll
-          path: artifacts/void-bossbars.dll
-          compression-level: 9
-          if-no-files-found: error
       # endregion Build BossBars
 
       # region Build Menus
@@ -68,15 +59,6 @@ jobs:
         if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
         shell: bash
         run: mv artifacts/Void.Plugins.Menus.dll artifacts/void-menus.dll
-
-      - name: Upload a Menus Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-menus.dll
-          path: artifacts/void-menus.dll
-          compression-level: 9
-          if-no-files-found: error
       # endregion Build Menus
 
       # region Build PlayerPositions
@@ -96,15 +78,6 @@ jobs:
         if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
         shell: bash
         run: mv artifacts/Void.Plugins.PlayerPositions.dll artifacts/void-player-positions.dll
-
-      - name: Upload a PlayerPositions Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-player-positions.dll
-          path: artifacts/void-player-positions.dll
-          compression-level: 9
-          if-no-files-found: error
       # endregion Build PlayerPositions
 
       # region Build TabLists
@@ -123,14 +96,13 @@ jobs:
       - name: Rename TabLists Artifact
         if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
         shell: bash
-        run: mv artifacts/Void.Plugins.TabList.dll artifacts/void-tab-lists.dll
+        run: mv artifacts/Void.Plugins.TabLists.dll artifacts/void-tab-lists.dll
+      # endregion Build TabLists
 
-      - name: Upload a TabLists Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+      - name: Upload a Build Artifact
+        if: ${{ fromJSON(inputs.release-info).releases_created == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: void-tab-lists.dll
-          path: artifacts/void-tab-lists.dll
+          path: artifacts
           compression-level: 9
           if-no-files-found: error
-      # endregion Build TabLists

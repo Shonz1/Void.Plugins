@@ -23,18 +23,81 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
+      # region Build BossBars
       - name: Build BossBars
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
         run: dotnet build src/BossBars --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
 
       - name: Pack BossBars
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
         run: dotnet pack src/BossBars --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
 
       - name: Rename BossBars Artifacts
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
         shell: bash
-        run: mv artifacts/BossBars.${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}.nupkg artifacts/void-bossbars.nupkg
+        run: mv artifacts/Void.Plugins.BossBars.${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}.nupkg artifacts/void-bossbars.nupkg
 
       - name: NuGet Push BossBars
-        run: dotnet nuget push artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
+        run: dotnet nuget push artifacts/void-bossbars.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+      # endregion Build BossBars
+
+      # region Build Menus
+      - name: Build Menus
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
+        run: dotnet build src/Menus --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/Menus--version'] }}
+
+      - name: Pack Menus
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
+        run: dotnet pack src/Menus --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/Menus--version'] }}
+
+      - name: Rename Menus Artifacts
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
+        shell: bash
+        run: mv artifacts/Void.Plugins.Menus.${{ fromJSON(inputs.release-info)['src/Menus--version'] }}.nupkg artifacts/void-menus.nupkg
+
+      - name: NuGet Push Menus
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
+        run: dotnet nuget push artifacts/void-menus.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+      # endregion Build Menus
+
+      # region Build PlayerPositions
+      - name: Build PlayerPositions
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
+        run: dotnet build src/PlayerPositions --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}
+
+      - name: Pack PlayerPositions
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
+        run: dotnet pack src/PlayerPositions --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}
+
+      - name: Rename PlayerPositions Artifacts
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
+        shell: bash
+        run: mv artifacts/Void.Plugins.PlayerPositions.${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}.nupkg artifacts/void-player-positions.nupkg
+
+      - name: NuGet Push PlayerPositions
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
+        run: dotnet nuget push artifacts/void-player-positions.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+      # endregion Build PlayerPositions
+
+      # region Build TabLists
+      - name: Build TabLists
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        run: dotnet build src/TabLists --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}
+
+      - name: Pack TabLists
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        run: dotnet pack src/TabLists --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}
+
+      - name: Rename TabLists Artifacts
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        shell: bash
+        run: mv artifacts/Void.Plugins.TabLists.${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}.nupkg artifacts/void-tab-lists.nupkg
+
+      - name: NuGet Push TabLists
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        run: dotnet nuget push artifacts/void-tab-lists.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+      # endregion Build TabLists
 
       - name: Upload a Pack Artifacts
         uses: actions/upload-artifact@v4
