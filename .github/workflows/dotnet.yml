@@ -25,24 +25,24 @@ jobs:
 
       # region Build BossBars
       - name: Build BossBars without Version
-        if: ${{ !fromJSON(fromJSON(inputs.release-info)['src/BossBars--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] != "true" }}
         run: dotnet build src/BossBars --configuration Release
 
       - name: Build BossBars
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/BossBars--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == "true" }}
         run: dotnet build src/BossBars --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
 
       - name: Publish BossBars
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/BossBars--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == "true" }}
         run: dotnet publish src/BossBars --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
 
       - name: Rename BossBars Artifact
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/BossBars--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == "true" }}
         shell: bash
         run: mv artifacts/BossBars.dll artifacts/void-bossbars.dll
 
       - name: Upload a BossBars Build Artifact
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/BossBars--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == "true" }}
         uses: actions/upload-artifact@v4
         with:
           name: void-bossbars.dll
@@ -53,24 +53,24 @@ jobs:
 
       # region Build Menus
       - name: Build Menus without Version
-        if: ${{ !fromJSON(fromJSON(inputs.release-info)['src/Menus--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] != "true" }}
         run: dotnet build src/Menus --configuration Release
 
       - name: Build Menus
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/Menus--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == "true" }}
         run: dotnet build src/Menus --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/Menus--version'] }}
 
       - name: Publish Menus
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/Menus--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == "true" }}
         run: dotnet publish src/Menus --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/Menus--version'] }}
 
       - name: Rename Menus Artifact
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/Menus--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == "true" }}
         shell: bash
         run: mv artifacts/Menus.dll artifacts/void-menus.dll
 
       - name: Upload a Menus Build Artifact
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/Menus--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == "true" }}
         uses: actions/upload-artifact@v4
         with:
           name: void-menus.dll
@@ -81,24 +81,24 @@ jobs:
 
       # region Build PlayerPositions
       - name: Build PlayerPositions without Version
-        if: ${{ !fromJSON(fromJSON(inputs.release-info)['src/PlayerPositions--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] != "true" }}
         run: dotnet build src/PlayerPositions --configuration Release
 
       - name: Build PlayerPositions
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/PlayerPositions--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == "true" }}
         run: dotnet build src/PlayerPositions --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}
 
       - name: Publish PlayerPositions
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/PlayerPositions--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == "true" }}
         run: dotnet publish src/PlayerPositions --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}
 
       - name: Rename PlayerPositions Artifact
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/PlayerPositions--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == "true" }}
         shell: bash
         run: mv artifacts/PlayerPositions.dll artifacts/void-player-positions.dll
 
       - name: Upload a PlayerPositions Build Artifact
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/PlayerPositions--release_created']) }}
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == "true" }}
         uses: actions/upload-artifact@v4
         with:
           name: void-player-positions.dll
