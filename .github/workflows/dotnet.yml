@@ -37,7 +37,7 @@ jobs:
         run: dotnet publish src/BossBars --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
 
       - name: Rename BossBars Artifact
-        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/BossBars--release_created'])) }}
+        if: ${{ fromJSON(fromJSON(inputs.release-info)['src/BossBars--release_created']) }}
         shell: bash
         run: mv artifacts/BossBars.dll artifacts/void-bossbars.dll
 
