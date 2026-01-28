@@ -7,7 +7,7 @@ on:
 
 jobs:
   push:
-    if: ${{ fromJSON(inputs.release-info).releases_created == "true" }}
+    if: ${{ fromJSON(inputs.release-info).releases_created == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,21 +20,21 @@ jobs:
           merge-multiple: true
 
       - name: Upload BossBars Release Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == "true" }}
+        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload ${{ fromJSON(inputs.release-info)['src/BossBars--tag_name'] }} artifacts/void-bossbars.dll
 
       - name: Upload Menus Release Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == "true" }}
+        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload ${{ fromJSON(inputs.release-info)['src/Menus--tag_name'] }} artifacts/void-menus.dll
 
       - name: Upload PlayerPositions Release Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == "true" }}
+        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
