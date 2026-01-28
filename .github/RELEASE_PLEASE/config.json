@@ -4,7 +4,7 @@
   "include-v-in-tag": true,
   "release-type": "dotnet-yoshi",
   "versioning": "prerelease",
-  "pull-request-header": ":robot: Development Build",
+  "pull-request-header": ":robot: Development Build\n---\n## ${version} - ${component}",
   "pull-request-footer": "This PR was generated with Release Please.",
   "draft": false,
 
