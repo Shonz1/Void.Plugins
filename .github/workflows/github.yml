@@ -7,7 +7,7 @@ on:
 
 jobs:
   push:
-    if: ${{ fromJson(inputs.release-info).release_created }}
+    if: ${{ fromJson(inputs.release-info).releases_created }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

@@ -12,7 +12,7 @@ jobs:
   push:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    if: ${{ fromJson(inputs.release-info).release_created }}
+    if: ${{ fromJson(inputs.release-info).releases_created }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
