@@ -96,7 +96,7 @@ jobs:
       - name: Rename TabLists Artifact
         if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
         shell: bash
-        run: mv artifacts/Void.Plugins.TabList.dll artifacts/void-tab-lists.dll
+        run: mv artifacts/Void.Plugins.TabLists.dll artifacts/void-tab-lists.dll
       # endregion Build TabLists
 
       - name: Upload a Build Artifact
