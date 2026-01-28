@@ -12,7 +12,7 @@ jobs:
   push:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    if: ${{ fromJson(inputs.release-info).releases_created }}
+    if: ${{ fromJSON(fromJSON(inputs.release-info).releases_created) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,14 +24,14 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Build BossBars
-        run: dotnet build src/BossBars --configuration Release /p:Version=${{ fromJson(inputs.release-info)['src/BossBars--version'] }}
+        run: dotnet build src/BossBars --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
 
       - name: Pack BossBars
-        run: dotnet pack src/BossBars --configuration Release --output artifacts /p:Version=${{ fromJson(inputs.release-info)['src/BossBars--version'] }}
+        run: dotnet pack src/BossBars --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
 
       - name: Rename BossBars Artifacts
         shell: bash
-        run: mv artifacts/BossBars.${{ fromJson(inputs.release-info)['src/BossBars--version'] }}.nupkg artifacts/void-bossbars.nupkg
+        run: mv artifacts/BossBars.${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}.nupkg artifacts/void-bossbars.nupkg
 
       - name: NuGet Push BossBars
         run: dotnet nuget push artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
