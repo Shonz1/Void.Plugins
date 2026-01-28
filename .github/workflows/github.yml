@@ -39,3 +39,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload ${{ fromJSON(inputs.release-info)['src/PlayerPositions--tag_name'] }} artifacts/void-player-positions.dll
+
+      - name: Upload TabLists Release Artifacts
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ fromJSON(inputs.release-info)['src/TabLists--tag_name'] }} artifacts/void-tab-lists.dll

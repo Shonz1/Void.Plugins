@@ -39,7 +39,7 @@ jobs:
       - name: Rename BossBars Artifact
         if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
         shell: bash
-        run: mv artifacts/BossBars.dll artifacts/void-bossbars.dll
+        run: mv artifacts/Void.Plugins.BossBars.dll artifacts/void-bossbars.dll
 
       - name: Upload a BossBars Build Artifact
         if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
@@ -67,7 +67,7 @@ jobs:
       - name: Rename Menus Artifact
         if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
         shell: bash
-        run: mv artifacts/Menus.dll artifacts/void-menus.dll
+        run: mv artifacts/Void.Plugins.Menus.dll artifacts/void-menus.dll
 
       - name: Upload a Menus Build Artifact
         if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
@@ -95,7 +95,7 @@ jobs:
       - name: Rename PlayerPositions Artifact
         if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
         shell: bash
-        run: mv artifacts/PlayerPositions.dll artifacts/void-player-positions.dll
+        run: mv artifacts/Void.Plugins.PlayerPositions.dll artifacts/void-player-positions.dll
 
       - name: Upload a PlayerPositions Build Artifact
         if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
@@ -106,3 +106,31 @@ jobs:
           compression-level: 9
           if-no-files-found: error
       # endregion Build PlayerPositions
+
+      # region Build TabLists
+      - name: Build TabLists without Version
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] != 'true' }}
+        run: dotnet build src/TabLists --configuration Release
+
+      - name: Build TabLists
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        run: dotnet build src/TabLists --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}
+
+      - name: Publish TabLists
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        run: dotnet publish src/TabLists --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}
+
+      - name: Rename TabLists Artifact
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        shell: bash
+        run: mv artifacts/Void.Plugins.TabList.dll artifacts/void-tab-lists.dll
+
+      - name: Upload a TabLists Build Artifact
+        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: void-tab-lists.dll
+          path: artifacts/void-tab-lists.dll
+          compression-level: 9
+          if-no-files-found: error
+      # endregion Build TabLists

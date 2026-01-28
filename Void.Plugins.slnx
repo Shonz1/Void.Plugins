@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/BossBars/Void.Plugins.BossBars.csproj" />
+  <Project Path="src/Menus/Void.Plugins.Menus.csproj" />
+  <Project Path="src/PlayerPositions/Void.Plugins.PlayerPositions.csproj" />
+  <Project Path="src/TabLists/Void.Plugins.TabLists.csproj" />
+</Solution>

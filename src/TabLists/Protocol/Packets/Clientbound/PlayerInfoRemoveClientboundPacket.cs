@@ -1,0 +1,45 @@
+using Void.Minecraft.Buffers;
+using Void.Minecraft.Network;
+using Void.Minecraft.Network.Messages.Packets;
+using Void.Minecraft.Network.Registries.PacketId.Mappings;
+using Void.Minecraft.Profiles;
+
+namespace TabLists.Protocol.Packets.Clientbound;
+
+public class PlayerInfoRemoveClientboundPacket : IMinecraftClientboundPacket<PlayerInfoRemoveClientboundPacket>
+{
+  public static readonly MinecraftPacketIdMapping[] Mappings = [
+    new(0x34, ProtocolVersion.MINECRAFT_1_19_3),
+    new(0x39, ProtocolVersion.MINECRAFT_1_19_4),
+    new(0x3B, ProtocolVersion.MINECRAFT_1_20_2),
+    new(0x3D, ProtocolVersion.MINECRAFT_1_20_5),
+    new(0x3F, ProtocolVersion.MINECRAFT_1_21_4),
+    new(0x3E, ProtocolVersion.MINECRAFT_1_21_5)
+  ];
+
+  public List<Uuid> PlayerUuids { get; set; } = new ();
+
+  public static PlayerInfoRemoveClientboundPacket Decode(ref MinecraftBuffer buffer, ProtocolVersion protocolVersion)
+  {
+    var count = buffer.ReadVarInt();
+    var uuids = new List<Uuid>(count);
+
+    for (var i = 0; i < count; i++)
+      uuids.Add(buffer.ReadUuid());
+
+    return new PlayerInfoRemoveClientboundPacket() { PlayerUuids = uuids };
+  }
+
+  public void Encode(ref MinecraftBuffer buffer, ProtocolVersion protocolVersion)
+  {
+    buffer.WriteVarInt(PlayerUuids.Count);
+
+    foreach (var uuid in PlayerUuids)
+      buffer.WriteUuid(uuid);
+  }
+
+  public void Dispose()
+  {
+    GC.SuppressFinalize(this);
+  }
+}

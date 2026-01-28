@@ -23,6 +23,10 @@
     "src/PlayerPositions": {
       "path": "src/PlayerPositions",
       "component": "PlayerPositions"
+    },
+    "src/TabLists": {
+      "path": "src/TabLists",
+      "component": "TabLists"
     }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
