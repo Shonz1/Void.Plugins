@@ -98,10 +98,3 @@ jobs:
         if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
         run: dotnet nuget push artifacts/void-tab-lists.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
       # endregion Build TabLists
-
-      - name: Upload a Pack Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          path: artifacts
-          compression-level: 9
-          if-no-files-found: error
