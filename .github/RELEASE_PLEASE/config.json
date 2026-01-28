@@ -2,9 +2,9 @@
   "separate-pull-requests": true,
   "include-component-in-tag": true,
   "include-v-in-tag": true,
-  "release-type": "dotnet-yoshi",
+  "release-type": "node",
   "versioning": "prerelease",
-  "pull-request-header": ":robot: Development Build\n---\n## ${version} - ${component}",
+  "pull-request-header": ":robot: Development Build",
   "pull-request-footer": "This PR was generated with Release Please.",
   "draft": false,
 
@@ -12,15 +12,9 @@
   "bump-patch-for-minor-pre-major": true,
 
   "packages": {
-    "src/BossBars": {
-      "component": "BossBars"
-    },
-    "src/Menus": {
-      "component": "Menus"
-    },
-    "src/PlayerPositions": {
-      "component": "PlayerPositions"
-    }
+    "src/BossBars": {},
+    "src/Menus": {},
+    "src/PlayerPositions": {}
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }
