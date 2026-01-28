@@ -2,7 +2,7 @@
   "separate-pull-requests": true,
   "include-component-in-tag": true,
   "include-v-in-tag": true,
-  "release-type": "node",
+  "release-type": "go",
   "versioning": "prerelease",
   "pull-request-header": ":robot: Development Build",
   "pull-request-footer": "This PR was generated with Release Please.",
