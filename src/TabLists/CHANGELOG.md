@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.6...TabLists-v0.0.7) (2026-04-14)
+
+
+### Features
+
+* Bump Void.Data from 0.1.10 to 0.1.11 ([#40](https://github.com/Shonz1/Void.Plugins/issues/40)) ([7965722](https://github.com/Shonz1/Void.Plugins/commit/7965722242a38d8d8459ecda44cf50cef19987e2))
+
 ## [0.0.6](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.5...TabLists-v0.0.6) (2026-04-14)
 
 
