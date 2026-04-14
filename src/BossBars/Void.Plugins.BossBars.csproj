@@ -9,9 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Void.Minecraft" Version="0.5.6" />
-      <PackageReference Include="Void.Proxy.Api" Version="*-*" />
-      <PackageReference Include="Void.Data" Version="0.1.8" />
+      <PackageReference Include="Void.Minecraft" Version="0.5.13" />
+      <PackageReference Include="Void.Proxy.Api" Version="0.5.13" />
+      <PackageReference Include="Void.Data" Version="0.1.10" />
     </ItemGroup>
 
 </Project>
