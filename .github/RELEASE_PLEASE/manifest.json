@@ -1,6 +1,6 @@
 {
   "src/BossBars": "0.0.6",
   "src/Menus": "0.0.4",
-  "src/PlayerPositions": "0.0.4",
+  "src/PlayerPositions": "0.0.5",
   "src/TabLists": "0.0.7"
 }
