@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.5...TabLists-v0.0.6) (2026-04-14)
+
+
+### Features
+
+* bump dependencies ([#35](https://github.com/Shonz1/Void.Plugins/issues/35)) ([546cc40](https://github.com/Shonz1/Void.Plugins/commit/546cc40db614a13138757cf734158ff29e68a70b))
+
 ## [0.0.5](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.4...TabLists-v0.0.5) (2026-01-28)
 
 
