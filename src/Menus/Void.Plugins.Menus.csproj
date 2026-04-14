@@ -10,7 +10,7 @@
     <ItemGroup>
       <PackageReference Include="Void.Minecraft" Version="0.5.13" />
       <PackageReference Include="Void.Proxy.Api" Version="0.5.13" />
-      <PackageReference Include="Void.Data" Version="0.1.10" />
+      <PackageReference Include="Void.Data" Version="0.1.11" />
     </ItemGroup>
 
 </Project>
