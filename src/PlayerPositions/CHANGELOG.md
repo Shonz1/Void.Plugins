@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/Shonz1/Void.Plugins/compare/PlayerPositions-v0.0.4...PlayerPositions-v0.0.5) (2026-04-14)
+
+
+### Features
+
+* Bump Void.Data from 0.1.10 to 0.1.11 ([#40](https://github.com/Shonz1/Void.Plugins/issues/40)) ([7965722](https://github.com/Shonz1/Void.Plugins/commit/7965722242a38d8d8459ecda44cf50cef19987e2))
+
 ## [0.0.4](https://github.com/Shonz1/Void.Plugins/compare/PlayerPositions-v0.0.3...PlayerPositions-v0.0.4) (2026-04-14)
 
 
