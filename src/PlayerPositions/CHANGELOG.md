@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/Shonz1/Void.Plugins/compare/PlayerPositions-v0.0.3...PlayerPositions-v0.0.4) (2026-04-14)
+
+
+### Features
+
+* bump dependencies ([#35](https://github.com/Shonz1/Void.Plugins/issues/35)) ([546cc40](https://github.com/Shonz1/Void.Plugins/commit/546cc40db614a13138757cf734158ff29e68a70b))
+
 ## [0.0.3](https://github.com/Shonz1/Void.Plugins/compare/PlayerPositions-v0.0.2...PlayerPositions-v0.0.3) (2026-01-28)
 
 
