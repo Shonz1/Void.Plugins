@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TabLists.Minecraft.PlayerInfo.Actions;
 using TabLists.Protocol.Packets.Clientbound;
 using TabLists.Services;
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Network;
 using Void.Minecraft.Network.Messages.Binary;
 using Void.Minecraft.Players.Extensions;
@@ -36,7 +37,7 @@ public class TabListsPlugin(IDependencyService dependencyService) : IApiPlugin
   [Subscribe]
   private void OnAuthenticationFinished(AuthenticationFinishedEvent @event)
   {
-    var profile = PlayerExtensions.get_Profile(@event.Player);
+    var profile = @event.Player.Profile;
     if (profile is null)
       return;
 
@@ -46,9 +47,13 @@ public class TabListsPlugin(IDependencyService dependencyService) : IApiPlugin
   [Subscribe]
   private async ValueTask OnPlayerInfoPacket(MessageReceivedEvent @event, CancellationToken cancellationToken)
   {
-    if (PlayerExtensions.get_ProtocolVersion(@event.Player) >= ProtocolVersion.MINECRAFT_1_20_5)
+    if (@event.Player.ProtocolVersion >= ProtocolVersion.MINECRAFT_1_20_5)
     {
-      if (@event.From is Side.Server && @event.Message is IMinecraftBinaryMessage { Id: 0x2B } binaryPacket)
+      var playPacketId = @event.Player.ProtocolVersion > ProtocolVersion.MINECRAFT_1_21
+        ? MinecraftPacketRegistry.GetId(@event.Player.ProtocolVersion, Phase.Play, Direction.Clientbound, "minecraft:login")
+        : 0x2B;
+
+      if (@event.From is Side.Server && @event.Message is IMinecraftBinaryMessage binaryPacket && binaryPacket.Id == playPacketId)
       {
         @event.Cancel();
 
