@@ -1,3 +1,4 @@
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Network;
 
@@ -5,18 +6,14 @@ namespace Menus.Minecraft.Components.Item;
 
 public class DamageItemComponent : IItemComponent<DamageItemComponent>
 {
-  private static readonly Dictionary<ProtocolVersion, int> Mappings = new()
-  {
-    { ProtocolVersion.MINECRAFT_1_20_5, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21_2, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21_4, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21_5, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21_6, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21_7, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21_9, 0x03 },
-    { ProtocolVersion.MINECRAFT_1_21_11, 0x03 }
-  };
+  private static readonly Dictionary<ProtocolVersion, int> Mappings =
+    new Dictionary<ProtocolVersion, int> { { ProtocolVersion.MINECRAFT_1_20_5, 0x03 } }
+      .Concat(
+        ProtocolVersion
+          .Range(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.Latest)
+          .Select(i => new KeyValuePair<ProtocolVersion, int>(i, MinecraftDataComponentTypeRegistry.GetId(i, "minecraft:damage")))
+      )
+      .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
   public int Value { get; set; }
 
