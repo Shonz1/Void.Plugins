@@ -25,7 +25,7 @@ jobs:
 
       # region Build BossBars
       - name: Build BossBars without Version
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] != 'true' }}
+        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)['src/BossBars--release_created'] != 'true' }}
         run: dotnet build src/BossBars --configuration Release
 
       - name: Build BossBars
@@ -53,7 +53,7 @@ jobs:
 
       # region Build Menus
       - name: Build Menus without Version
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] != 'true' }}
+        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)['src/Menus--release_created'] != 'true' }}
         run: dotnet build src/Menus --configuration Release
 
       - name: Build Menus
@@ -81,7 +81,7 @@ jobs:
 
       # region Build PlayerPositions
       - name: Build PlayerPositions without Version
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] != 'true' }}
+        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] != 'true' }}
         run: dotnet build src/PlayerPositions --configuration Release
 
       - name: Build PlayerPositions
@@ -109,7 +109,7 @@ jobs:
 
       # region Build TabLists
       - name: Build TabLists without Version
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] != 'true' }}
+        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)['src/TabLists--release_created'] != 'true' }}
         run: dotnet build src/TabLists --configuration Release
 
       - name: Build TabLists

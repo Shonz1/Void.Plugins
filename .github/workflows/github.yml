@@ -19,30 +19,136 @@ jobs:
           path: artifacts
           merge-multiple: true
 
-      - name: Upload BossBars Release Artifacts
+      - name: Resolve prior plugin DLLs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_INFO: ${{ inputs.release-info }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+
+          declare -A SKIPPED
+
+          plugins=(
+            "BossBars|void-bossbars.dll|src/BossBars--release_created" 
+            "Menus|void-menus.dll|src/Menus--release_created"
+            "PlayerPositions|void-player-positions.dll|src/PlayerPositions--release_created"
+            "TabLists|void-tab-lists.dll|src/TabLists--release_created"
+          )
+
+          for entry in "${plugins[@]}"; do
+            IFS='|' read -r component dll key <<< "$entry"
+            released=$(echo "$RELEASE_INFO" | jq -r --arg k "$key" '.[$k] // "false"')
+
+            if [ "$released" = "true" ]; then
+              echo "::notice::$component released this run — using freshly built $dll"
+              continue
+            fi
+
+            if [ -f "artifacts/$dll" ]; then
+              echo "::notice::Trusting pre-existing $dll in artifacts/"
+              continue
+            fi
+
+            releases_json=$(gh release list --limit 200 --json tagName,createdAt 2>&1) || {
+              echo "::error::gh release list failed for $component: $releases_json"
+              exit 1
+            }
+            latest_tag=$(echo "$releases_json" | jq -r \
+              --arg c "$component" \
+              '[.[] | select(.tagName | test("^" + $c + "-v[0-9]+\\.[0-9]+\\.[0-9]+$"))] | sort_by(.createdAt) | reverse | .[0].tagName' \
+              2>/dev/null || echo "null")
+
+            if [ -z "$latest_tag" ] || [ "$latest_tag" = "null" ]; then
+              echo "::warning::No stable prior release found for $component — $dll will be omitted"
+              SKIPPED[$dll]=1
+              continue
+            fi
+
+            echo "::notice::Fetching $dll from $latest_tag"
+            if ! gh release download "$latest_tag" --pattern "$dll" --dir artifacts --clobber 2>&1; then
+              echo "::warning::Failed to download $dll from $latest_tag — skipping"
+              SKIPPED[$dll]=1
+            fi
+          done
+
+          echo "=== Bundle manifest ==="
+          shopt -s nullglob
+          for f in artifacts/void-*.dll; do echo "  $f"; done
+          shopt -u nullglob
+
+          missing=()
+          for dll in void-bossbars.dll void-menus.dll void-player-positions.dll void-tab-lists.dll; do
+            if [ -z "${SKIPPED[$dll]+x}" ] && [ ! -f "artifacts/$dll" ]; then
+              missing+=("$dll")
+            fi
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Expected DLLs missing from artifacts: ${missing[*]}"
+            exit 1
+          fi
+
+      - name: Upload BossBars Release bundle
         if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         run: |
-          gh release upload ${{ fromJSON(inputs.release-info)['src/BossBars--tag_name'] }} artifacts/void-bossbars.dll
+          set -euo pipefail
+          shopt -s nullglob
+          files=(artifacts/void-*.dll)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No DLLs found in artifacts/ for BossBars bundle upload"
+            exit 1
+          fi
+          gh release upload "${{ fromJSON(inputs.release-info)['src/BossBars--tag_name'] }}" \
+            "${files[@]}" --clobber
 
-      - name: Upload Menus Release Artifacts
+      - name: Upload Menus Release bundle
         if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         run: |
-          gh release upload ${{ fromJSON(inputs.release-info)['src/Menus--tag_name'] }} artifacts/void-menus.dll
+          set -euo pipefail
+          shopt -s nullglob
+          files=(artifacts/void-*.dll)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No DLLs found in artifacts/ for Menus bundle upload"
+            exit 1
+          fi
+          gh release upload "${{ fromJSON(inputs.release-info)['src/Menus--tag_name'] }}" \
+            "${files[@]}" --clobber
 
-      - name: Upload PlayerPositions Release Artifacts
+      - name: Upload PlayerPositions Release bundle
         if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         run: |
-          gh release upload ${{ fromJSON(inputs.release-info)['src/PlayerPositions--tag_name'] }} artifacts/void-player-positions.dll
+          set -euo pipefail
+          shopt -s nullglob
+          files=(artifacts/void-*.dll)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No DLLs found in artifacts/ for PlayerPositions bundle upload"
+            exit 1
+          fi
+          gh release upload "${{ fromJSON(inputs.release-info)['src/PlayerPositions--tag_name'] }}" \
+            "${files[@]}" --clobber
 
-      - name: Upload TabLists Release Artifacts
+      - name: Upload TabLists Release bundle
         if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         run: |
-          gh release upload ${{ fromJSON(inputs.release-info)['src/TabLists--tag_name'] }} artifacts/void-tab-lists.dll
+          set -euo pipefail
+          shopt -s nullglob
+          files=(artifacts/void-*.dll)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No DLLs found in artifacts/ for TabLists bundle upload"
+            exit 1
+          fi
+          gh release upload "${{ fromJSON(inputs.release-info)['src/TabLists--tag_name'] }}" \
+            "${files[@]}" --clobber
