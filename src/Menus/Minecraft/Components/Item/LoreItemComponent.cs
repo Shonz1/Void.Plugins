@@ -1,3 +1,4 @@
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Components.Text;
 using Void.Minecraft.Network;
@@ -6,18 +7,14 @@ namespace Menus.Minecraft.Components.Item;
 
 public class LoreItemComponent : IItemComponent<LoreItemComponent>
 {
-  private static readonly Dictionary<ProtocolVersion, int> Mappings = new()
-  {
-    { ProtocolVersion.MINECRAFT_1_20_5, 0x07 },
-    { ProtocolVersion.MINECRAFT_1_21, 0x07 },
-    { ProtocolVersion.MINECRAFT_1_21_2, 0x08 },
-    { ProtocolVersion.MINECRAFT_1_21_4, 0x08 },
-    { ProtocolVersion.MINECRAFT_1_21_5, 0x08 },
-    { ProtocolVersion.MINECRAFT_1_21_6, 0x08 },
-    { ProtocolVersion.MINECRAFT_1_21_7, 0x08 },
-    { ProtocolVersion.MINECRAFT_1_21_9, 0x08 },
-    { ProtocolVersion.MINECRAFT_1_21_11, 0x0B }
-  };
+  private static readonly Dictionary<ProtocolVersion, int> Mappings =
+    new Dictionary<ProtocolVersion, int> { { ProtocolVersion.MINECRAFT_1_20_5, 0x07 } }
+      .Concat(
+        ProtocolVersion
+          .Range(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.Latest)
+          .Select(i => new KeyValuePair<ProtocolVersion, int>(i, MinecraftDataComponentTypeRegistry.GetId(i, "minecraft:lore")))
+      )
+      .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
   public required List<Component> Value { get; set; }
 

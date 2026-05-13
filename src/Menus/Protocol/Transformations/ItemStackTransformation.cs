@@ -489,14 +489,6 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
         continue;
       }
 
-      var profileItemComponentId = ProfileItemComponent.GetId(fromProtocolVersion);
-      if (profileItemComponentId == componentId.AsPrimitive)
-      {
-        wrapper.Write(VarIntProperty.FromPrimitive(ProfileItemComponent.GetId(toProtocolVersion)));
-        wrapper.Passthrough<ProfileItemComponentProperty>();
-        continue;
-      }
-
       var resolvableProfileItemComponentId = ResolvableProfileItemComponent.GetId(fromProtocolVersion);
       if (resolvableProfileItemComponentId == componentId.AsPrimitive)
       {
@@ -514,6 +506,14 @@ public class ItemStackTransformation(ILogger<ItemStackTransformation> logger)
 
         wrapper.Write(VarIntProperty.FromPrimitive(ResolvableProfileItemComponent.GetId(toProtocolVersion)));
         wrapper.Passthrough<ResolvableProfileItemComponentProperty>();
+        continue;
+      }
+
+      var profileItemComponentId = ProfileItemComponent.GetId(fromProtocolVersion);
+      if (profileItemComponentId == componentId.AsPrimitive)
+      {
+        wrapper.Write(VarIntProperty.FromPrimitive(ProfileItemComponent.GetId(toProtocolVersion)));
+        wrapper.Passthrough<ProfileItemComponentProperty>();
         continue;
       }
 

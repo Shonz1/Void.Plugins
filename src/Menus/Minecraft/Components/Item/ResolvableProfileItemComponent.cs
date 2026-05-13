@@ -19,11 +19,14 @@ public enum Model
 
 public class ResolvableProfileItemComponent : IItemComponent<ResolvableProfileItemComponent>
 {
-  private static readonly Dictionary<ProtocolVersion, int> Mappings = new()
-  {
-    { ProtocolVersion.MINECRAFT_1_21_9, 0x3D },
-    { ProtocolVersion.MINECRAFT_1_21_11, 0x44 }
-  };
+  private static readonly Dictionary<ProtocolVersion, int> Mappings =
+    new Dictionary<ProtocolVersion, int> { { ProtocolVersion.MINECRAFT_1_20_5, 0x2E } }
+      .Concat(
+        ProtocolVersion
+          .Range(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.Latest)
+          .Select(i => new KeyValuePair<ProtocolVersion, int>(i, MinecraftDataComponentTypeRegistry.GetId(i, "minecraft:profile")))
+      )
+      .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
   public required Kind Kind { get; set; }
   public required GameProfile Profile { get; set; }

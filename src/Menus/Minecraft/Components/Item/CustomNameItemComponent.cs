@@ -1,3 +1,4 @@
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Components.Text;
 using Void.Minecraft.Network;
@@ -6,18 +7,14 @@ namespace Menus.Minecraft.Components.Item;
 
 public class CustomNameItemComponent: IItemComponent<CustomNameItemComponent>
 {
-  private static readonly Dictionary<ProtocolVersion, int> Mappings = new()
-  {
-    { ProtocolVersion.MINECRAFT_1_20_5, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21_2, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21_4, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21_5, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21_6, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21_7, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21_9, 0x05 },
-    { ProtocolVersion.MINECRAFT_1_21_11, 0x06 }
-  };
+  private static readonly Dictionary<ProtocolVersion, int> Mappings =
+    new Dictionary<ProtocolVersion, int> { { ProtocolVersion.MINECRAFT_1_20_5, 0x05 } }
+      .Concat(
+        ProtocolVersion
+          .Range(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.Latest)
+          .Select(i => new KeyValuePair<ProtocolVersion, int>(i, MinecraftDataComponentTypeRegistry.GetId(i, "minecraft:custom_name")))
+      )
+      .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
   public static int GetId(ProtocolVersion protocolVersion) => Mappings[protocolVersion];
 

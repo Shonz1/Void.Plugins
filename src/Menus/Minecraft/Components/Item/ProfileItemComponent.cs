@@ -1,3 +1,4 @@
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Network;
 using Void.Minecraft.Profiles;
@@ -6,18 +7,14 @@ namespace Menus.Minecraft.Components.Item;
 
 public class ProfileItemComponent : IItemComponent<ProfileItemComponent>
 {
-  private static readonly Dictionary<ProtocolVersion, int> Mappings = new()
-  {
-    { ProtocolVersion.MINECRAFT_1_20_5, 0x2E },
-    { ProtocolVersion.MINECRAFT_1_21, 0x2F },
-    { ProtocolVersion.MINECRAFT_1_21_2, 0x39 },
-    { ProtocolVersion.MINECRAFT_1_21_4, 0x39 },
-    { ProtocolVersion.MINECRAFT_1_21_5, 0x3D },
-    { ProtocolVersion.MINECRAFT_1_21_6, 0x3D },
-    { ProtocolVersion.MINECRAFT_1_21_7, 0x3D },
-    { ProtocolVersion.MINECRAFT_1_21_9, -1 },
-    { ProtocolVersion.MINECRAFT_1_21_11, -1 },
-  };
+  private static readonly Dictionary<ProtocolVersion, int> Mappings =
+    new Dictionary<ProtocolVersion, int> { { ProtocolVersion.MINECRAFT_1_20_5, 0x2E } }
+      .Concat(
+        ProtocolVersion
+          .Range(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.Latest)
+          .Select(i => new KeyValuePair<ProtocolVersion, int>(i, MinecraftDataComponentTypeRegistry.GetId(i, "minecraft:profile")))
+      )
+      .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
   public required GameProfile Value { get; set; }
 
