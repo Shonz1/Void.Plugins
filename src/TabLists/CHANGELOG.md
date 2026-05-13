@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.7...TabLists-v0.0.8) (2026-05-13)
+
+
+### Features
+
+* use data component registry ([#45](https://github.com/Shonz1/Void.Plugins/issues/45)) ([45eb95d](https://github.com/Shonz1/Void.Plugins/commit/45eb95d76e5efbe3fa8d3a3ddf89c6c4dc720420))
+
 ## [0.0.7](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.6...TabLists-v0.0.7) (2026-04-14)
 
 
