@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.10](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.9...TabLists-v0.0.10) (2026-05-13)
+
+
+### Bug Fixes
+
+* **tab-list:** enforce secure chat setting override ([#53](https://github.com/Shonz1/Void.Plugins/issues/53)) ([603f4c2](https://github.com/Shonz1/Void.Plugins/commit/603f4c2f7fabec904ac7dd3369de07a40e0f1cbc))
+
 ## [0.0.9](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.8...TabLists-v0.0.9) (2026-05-13)
 
 
