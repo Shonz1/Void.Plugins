@@ -9,11 +9,33 @@ on:
         required: true
 
 jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.read.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read plugin manifest
+        id: read
+        run: |
+          set -euo pipefail
+          jq -e '.plugins | length > 0' .github/plugin-manifest.json > /dev/null
+          dup=$(jq -r '.plugins[].slug' .github/plugin-manifest.json | sort | uniq -d)
+          if [ -n "$dup" ]; then echo "::error::duplicate slug(s): $dup"; exit 1; fi
+          echo "matrix=$(jq -c '.plugins' .github/plugin-manifest.json)" >> "$GITHUB_OUTPUT"
+
   push:
+    needs: set-matrix
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     if: ${{ fromJSON(inputs.release-info).releases_created == 'true' }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.set-matrix.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,115 +44,31 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
+          cache: true
+          cache-dependency-path: 'src/**/*.csproj'
 
-      # region Build BossBars
-      - name: Build BossBars
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
-        run: dotnet build src/BossBars --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
+      - name: Build ${{ matrix.component }}
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
+        run: dotnet build ${{ matrix.path }} --configuration Release /p:Version=${{ fromJSON(inputs.release-info)[format('{0}--version', matrix.path)] }}
 
-      - name: Pack BossBars
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
-        run: dotnet pack src/BossBars --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
+      - name: Pack ${{ matrix.component }}
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
+        run: dotnet pack ${{ matrix.path }} --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)[format('{0}--version', matrix.path)] }}
 
-      - name: Rename BossBars Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
+      - name: Rename ${{ matrix.component }} Artifacts
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
         shell: bash
-        run: mv artifacts/Void.Plugins.BossBars.${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}.nupkg artifacts/void-bossbars.nupkg
+        run: mv artifacts/Void.Plugins.${{ matrix.component }}.${{ fromJSON(inputs.release-info)[format('{0}--version', matrix.path)] }}.nupkg artifacts/${{ matrix.slug }}.nupkg
 
-      - name: NuGet Push BossBars
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
-        run: dotnet nuget push artifacts/void-bossbars.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+      - name: NuGet Push ${{ matrix.component }}
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
+        run: dotnet nuget push artifacts/${{ matrix.slug }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
 
-      - name: Upload a BossBars Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
+      - name: Upload ${{ matrix.component }} Build Artifact
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: void-bossbars.nupkg
-          path: artifacts/void-bossbars.nupkg
+          name: ${{ matrix.slug }}.nupkg
+          path: artifacts/${{ matrix.slug }}.nupkg
           compression-level: 9
           if-no-files-found: error
-      # endregion Build BossBars
-
-      # region Build Menus
-      - name: Build Menus
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        run: dotnet build src/Menus --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/Menus--version'] }}
-
-      - name: Pack Menus
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        run: dotnet pack src/Menus --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/Menus--version'] }}
-
-      - name: Rename Menus Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        shell: bash
-        run: mv artifacts/Void.Plugins.Menus.${{ fromJSON(inputs.release-info)['src/Menus--version'] }}.nupkg artifacts/void-menus.nupkg
-
-      - name: NuGet Push Menus
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        run: dotnet nuget push artifacts/void-menus.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
-
-      - name: Upload a Menus Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-menus.nupkg
-          path: artifacts/void-menus.nupkg
-          compression-level: 9
-          if-no-files-found: error
-      # endregion Build Menus
-
-      # region Build PlayerPositions
-      - name: Build PlayerPositions
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        run: dotnet build src/PlayerPositions --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}
-
-      - name: Pack PlayerPositions
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        run: dotnet pack src/PlayerPositions --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}
-
-      - name: Rename PlayerPositions Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        shell: bash
-        run: mv artifacts/Void.Plugins.PlayerPositions.${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}.nupkg artifacts/void-player-positions.nupkg
-
-      - name: NuGet Push PlayerPositions
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        run: dotnet nuget push artifacts/void-player-positions.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
-
-      - name: Upload a PlayerPositions Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-player-positions.nupkg
-          path: artifacts/void-player-positions.nupkg
-          compression-level: 9
-          if-no-files-found: error
-      # endregion Build PlayerPositions
-
-      # region Build TabLists
-      - name: Build TabLists
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        run: dotnet build src/TabLists --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}
-
-      - name: Pack TabLists
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        run: dotnet pack src/TabLists --configuration Release --output artifacts /p:Version=${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}
-
-      - name: Rename TabLists Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        shell: bash
-        run: mv artifacts/Void.Plugins.TabLists.${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}.nupkg artifacts/void-tab-lists.nupkg
-
-      - name: NuGet Push TabLists
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        run: dotnet nuget push artifacts/void-tab-lists.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
-
-      - name: Upload a TabLists Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-tab-lists.nupkg
-          path: artifacts/void-tab-lists.nupkg
-          compression-level: 9
-          if-no-files-found: error
-      # endregion Build TabLists

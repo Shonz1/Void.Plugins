@@ -9,11 +9,33 @@ on:
         required: true
 
 jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.read.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read plugin manifest
+        id: read
+        run: |
+          set -euo pipefail
+          jq -e '.plugins | length > 0' .github/plugin-manifest.json > /dev/null
+          dup=$(jq -r '.plugins[].slug' .github/plugin-manifest.json | sort | uniq -d)
+          if [ -n "$dup" ]; then echo "::error::duplicate slug(s): $dup"; exit 1; fi
+          echo "matrix=$(jq -c '.plugins' .github/plugin-manifest.json)" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: set-matrix
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       COMMIT_MESSAGE: ${{ github.event_name == 'pull_request' && github.event.pull_request.title || github.event.head_commit.message }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.set-matrix.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,115 +44,31 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
+          cache: true
+          cache-dependency-path: 'src/**/*.csproj'
 
-      # region Build BossBars
-      - name: Build BossBars without Version
-        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)['src/BossBars--release_created'] != 'true' }}
-        run: dotnet build src/BossBars --configuration Release
+      - name: Build ${{ matrix.component }} without Version
+        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] != 'true' }}
+        run: dotnet build ${{ matrix.path }} --configuration Release
 
-      - name: Build BossBars
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
-        run: dotnet build src/BossBars --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
+      - name: Build ${{ matrix.component }}
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
+        run: dotnet build ${{ matrix.path }} --configuration Release /p:Version=${{ fromJSON(inputs.release-info)[format('{0}--version', matrix.path)] }}
 
-      - name: Publish BossBars
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
-        run: dotnet publish src/BossBars --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/BossBars--version'] }}
+      - name: Publish ${{ matrix.component }}
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
+        run: dotnet publish ${{ matrix.path }} --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)[format('{0}--version', matrix.path)] }}
 
-      - name: Rename BossBars Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
+      - name: Rename ${{ matrix.component }} Artifact
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
         shell: bash
-        run: mv artifacts/Void.Plugins.BossBars.dll artifacts/void-bossbars.dll
+        run: mv artifacts/Void.Plugins.${{ matrix.component }}.dll artifacts/${{ matrix.slug }}.dll
 
-      - name: Upload a BossBars Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
+      - name: Upload ${{ matrix.component }} Build Artifact
+        if: ${{ fromJSON(inputs.release-info)[format('{0}--release_created', matrix.path)] == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: void-bossbars.dll
-          path: artifacts/void-bossbars.dll
+          name: ${{ matrix.slug }}.dll
+          path: artifacts/${{ matrix.slug }}.dll
           compression-level: 9
           if-no-files-found: error
-      # endregion Build BossBars
-
-      # region Build Menus
-      - name: Build Menus without Version
-        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)['src/Menus--release_created'] != 'true' }}
-        run: dotnet build src/Menus --configuration Release
-
-      - name: Build Menus
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        run: dotnet build src/Menus --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/Menus--version'] }}
-
-      - name: Publish Menus
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        run: dotnet publish src/Menus --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/Menus--version'] }}
-
-      - name: Rename Menus Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        shell: bash
-        run: mv artifacts/Void.Plugins.Menus.dll artifacts/void-menus.dll
-
-      - name: Upload a Menus Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-menus.dll
-          path: artifacts/void-menus.dll
-          compression-level: 9
-          if-no-files-found: error
-      # endregion Build Menus
-
-      # region Build PlayerPositions
-      - name: Build PlayerPositions without Version
-        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] != 'true' }}
-        run: dotnet build src/PlayerPositions --configuration Release
-
-      - name: Build PlayerPositions
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        run: dotnet build src/PlayerPositions --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}
-
-      - name: Publish PlayerPositions
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        run: dotnet publish src/PlayerPositions --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/PlayerPositions--version'] }}
-
-      - name: Rename PlayerPositions Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        shell: bash
-        run: mv artifacts/Void.Plugins.PlayerPositions.dll artifacts/void-player-positions.dll
-
-      - name: Upload a PlayerPositions Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-player-positions.dll
-          path: artifacts/void-player-positions.dll
-          compression-level: 9
-          if-no-files-found: error
-      # endregion Build PlayerPositions
-
-      # region Build TabLists
-      - name: Build TabLists without Version
-        if: ${{ fromJSON(inputs.release-info).releases_created != 'true' && fromJSON(inputs.release-info)['src/TabLists--release_created'] != 'true' }}
-        run: dotnet build src/TabLists --configuration Release
-
-      - name: Build TabLists
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        run: dotnet build src/TabLists --configuration Release /p:Version=${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}
-
-      - name: Publish TabLists
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        run: dotnet publish src/TabLists --output artifacts --configuration Release --no-build /p:DebugType=embedded /p:Version=${{ fromJSON(inputs.release-info)['src/TabLists--version'] }}
-
-      - name: Rename TabLists Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        shell: bash
-        run: mv artifacts/Void.Plugins.TabLists.dll artifacts/void-tab-lists.dll
-
-      - name: Upload a TabLists Build Artifact
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: void-tab-lists.dll
-          path: artifacts/void-tab-lists.dll
-          compression-level: 9
-          if-no-files-found: error
-      # endregion Build TabLists
