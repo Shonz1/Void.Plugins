@@ -1,9 +1,11 @@
 using TabLists.Minecraft.PlayerInfo.Actions;
+using Void.Data.Api.Minecraft;
 using Void.Minecraft.Buffers;
 using Void.Minecraft.Network;
 using Void.Minecraft.Network.Messages.Packets;
 using Void.Minecraft.Network.Registries.PacketId.Mappings;
 using Void.Minecraft.Profiles;
+using Void.Proxy.Api.Network;
 
 namespace TabLists.Protocol.Packets.Clientbound;
 
@@ -25,8 +27,11 @@ public class PlayerInfoUpdateClientboundPacket : IMinecraftClientboundPacket<Pla
     new(0x3A, ProtocolVersion.MINECRAFT_1_19_4),
     new(0x3C, ProtocolVersion.MINECRAFT_1_20_2),
     new(0x3E, ProtocolVersion.MINECRAFT_1_20_5),
-    new(0x40, ProtocolVersion.MINECRAFT_1_21_4),
-    new(0x3F, ProtocolVersion.MINECRAFT_1_21_5)
+
+    .. ProtocolVersion
+      .Range(ProtocolVersion.MINECRAFT_1_21, ProtocolVersion.Latest)
+      .Select(i => new MinecraftPacketIdMapping(
+        MinecraftPacketRegistry.GetId(i, Phase.Play, Direction.Clientbound, "minecraft:player_info_update"), i))
   ];
 
   public Dictionary<Uuid, List<IPlayerInfoAction>> PlayerInfoActions { get; set; } = new ();
