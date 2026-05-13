@@ -19,30 +19,96 @@ jobs:
           path: artifacts
           merge-multiple: true
 
-      - name: Upload BossBars Release Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/BossBars--release_created'] == 'true' }}
+      - name: Resolve prior plugin DLLs
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_INFO: ${{ inputs.release-info }}
+        shell: bash
         run: |
-          gh release upload ${{ fromJSON(inputs.release-info)['src/BossBars--tag_name'] }} artifacts/void-bossbars.dll
+          set -euo pipefail
+          mkdir -p artifacts
 
-      - name: Upload Menus Release Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/Menus--release_created'] == 'true' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload ${{ fromJSON(inputs.release-info)['src/Menus--tag_name'] }} artifacts/void-menus.dll
+          declare -A SKIPPED
 
-      - name: Upload PlayerPositions Release Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/PlayerPositions--release_created'] == 'true' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload ${{ fromJSON(inputs.release-info)['src/PlayerPositions--tag_name'] }} artifacts/void-player-positions.dll
+          mapfile -t plugins < <(jq -r '.plugins[] | "\(.component)|\(.slug).dll|\(.path)--release_created"' .github/plugin-manifest.json)
 
-      - name: Upload TabLists Release Artifacts
-        if: ${{ fromJSON(inputs.release-info)['src/TabLists--release_created'] == 'true' }}
+          for entry in "${plugins[@]}"; do
+            IFS='|' read -r component dll key <<< "$entry"
+            released=$(echo "$RELEASE_INFO" | jq -r --arg k "$key" '.[$k] // "false"')
+
+            if [ "$released" = "true" ]; then
+              echo "::notice::$component released this run — using freshly built $dll"
+              continue
+            fi
+
+            if [ -f "artifacts/$dll" ]; then
+              echo "::notice::Trusting pre-existing $dll in artifacts/"
+              continue
+            fi
+
+            releases_json=$(gh release list --limit 200 --json tagName,createdAt 2>&1) || {
+              echo "::error::gh release list failed for $component: $releases_json"
+              exit 1
+            }
+            latest_tag=$(echo "$releases_json" | jq -r \
+              --arg c "$component" \
+              '[.[] | select(.tagName | test("^" + $c + "-v[0-9]+\\.[0-9]+\\.[0-9]+$"))] | sort_by(.createdAt) | reverse | .[0].tagName' \
+              2>/dev/null || echo "null")
+
+            if [ -z "$latest_tag" ] || [ "$latest_tag" = "null" ]; then
+              echo "::warning::No stable prior release found for $component — $dll will be omitted"
+              SKIPPED[$dll]=1
+              continue
+            fi
+
+            echo "::notice::Fetching $dll from $latest_tag"
+            if ! gh release download "$latest_tag" --pattern "$dll" --dir artifacts --clobber 2>&1; then
+              echo "::warning::Failed to download $dll from $latest_tag — skipping"
+              SKIPPED[$dll]=1
+            fi
+          done
+
+          echo "=== Bundle manifest ==="
+          shopt -s nullglob
+          for f in artifacts/void-*.dll; do echo "  $f"; done
+          shopt -u nullglob
+
+          missing=()
+          mapfile -t expected_dlls < <(jq -r '.plugins[] | "\(.slug).dll"' .github/plugin-manifest.json)
+          for dll in "${expected_dlls[@]}"; do
+            if [ -z "${SKIPPED[$dll]+x}" ] && [ ! -f "artifacts/$dll" ]; then
+              missing+=("$dll")
+            fi
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Expected DLLs missing from artifacts: ${missing[*]}"
+            exit 1
+          fi
+
+      - name: Upload Release bundles
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_INFO: ${{ inputs.release-info }}
+        shell: bash
         run: |
-          gh release upload ${{ fromJSON(inputs.release-info)['src/TabLists--tag_name'] }} artifacts/void-tab-lists.dll
+          set -euo pipefail
+          shopt -s nullglob
+          files=(artifacts/void-*.dll)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No DLLs found in artifacts/ for bundle upload"
+            exit 1
+          fi
+          while IFS='|' read -r component path slug; do
+            released=$(jq -r --arg k "${path}--release_created" '.[$k] // "false"' <<<"$RELEASE_INFO")
+            if [ "$released" != "true" ]; then
+              echo "::notice::Skipping $component bundle upload (release_created != true)"
+              continue
+            fi
+            tag=$(jq -r --arg k "${path}--tag_name" '.[$k]' <<<"$RELEASE_INFO")
+            if [ -z "$tag" ] || [ "$tag" = "null" ]; then
+              echo "::error::Missing tag_name for $component (path=$path)"
+              exit 1
+            fi
+            echo "Uploading ${#files[@]} DLL(s) to $tag ($component)"
+            gh release upload "$tag" "${files[@]}" --clobber
+          done < <(jq -r '.plugins[] | "\(.component)|\(.path)|\(.slug)"' .github/plugin-manifest.json)
