@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.9](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.8...TabLists-v0.0.9) (2026-05-13)
+
+
+### Features
+
+* **tab-list:** use packet registry ([#51](https://github.com/Shonz1/Void.Plugins/issues/51)) ([9f5848d](https://github.com/Shonz1/Void.Plugins/commit/9f5848df7e7a4b3aafb61d0f2dec26da7eb5476d))
+
 ## [0.0.8](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.7...TabLists-v0.0.8) (2026-05-13)
 
 
