@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/Shonz1/Void.Plugins/compare/PlayerPositions-v0.0.5...PlayerPositions-v0.0.6) (2026-05-13)
+
+
+### Features
+
+* use data component registry ([#45](https://github.com/Shonz1/Void.Plugins/issues/45)) ([45eb95d](https://github.com/Shonz1/Void.Plugins/commit/45eb95d76e5efbe3fa8d3a3ddf89c6c4dc720420))
+
 ## [0.0.5](https://github.com/Shonz1/Void.Plugins/compare/PlayerPositions-v0.0.4...PlayerPositions-v0.0.5) (2026-04-14)
 
 
