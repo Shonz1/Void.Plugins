@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.11](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.10...TabLists-v0.0.11) (2026-05-25)
+
+
+### Features
+
+* Bump Void.Data, Void.Minecraft and Void.Proxy.Api ([fdb404f](https://github.com/Shonz1/Void.Plugins/commit/fdb404fe2b773e1a7a83b538c32f7d12e89d643f))
+
 ## [0.0.10](https://github.com/Shonz1/Void.Plugins/compare/TabLists-v0.0.9...TabLists-v0.0.10) (2026-05-13)
 
 
